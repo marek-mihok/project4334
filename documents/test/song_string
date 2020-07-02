@@ -1,0 +1,56 @@
+{c: intro: 2x}\r\n\r\n[E][c#][A]\r\n\r\n{c: 1:}\r\n\r\n[E] Priblížiť sa k láske, [c#] ktorá seba [A]dáva\r\n[E] priblížiť sa k láske, [c#] ktorá všetko [A]žiada\r\n\r\n{c: prechorus:}\r\n\r\n[f#] Do [E/G#]svojej [H]prítomnosti [E/G#] zahaľ [A]nás\r\n[f#] a v [E/G#]tôni [H]svojich krídel [E/G#] ukry [A]nás\r\n\r\n{c: chorus:}\r\n\r\nVždy byť [E]blíz[H]ko, [c#][A] po tom [E]tú[H]žim[c#][A]\r\ntvoja [E]lás[H]ka [c#][A] je môj [E][c#]ú[H]kryt\r\n\r\n{c: Interlude}\r\n\r\n{c: 1}\r\n\r\n{c: prechorus}\r\n\r\n{c: chorus 2x}\r\n\r\n{c: interlude 2: 2x}\r\n\r\n[A][c#][A][E][H]\r\n\r\n{c: bridge: 6x}\r\n\r\nEmanu[f#]el, Emanu[c#]el\r\nEmanu[f#]el, Emanu[E][H]el\r\n\r\n{c: woah outro: 2x}\r\n\r\n[f#][c#][f#][E][H]
+
+
+Michal Čupa
+Matej Hudáček
+Moja predstava dream aplikácie (zostupne):
+Zadarmo, po slovensky, obsah čisto mnou pridaných piesní, jednoduchá obsluha aplikácie, sharing s kapelou (pdf), pridávanie textu a akordov, transpozícia, tónina.
+Neviem či som zodpovedal otázku. No osobne mi najviac vadí, že tie appky majú 1500 všelijakých nepotrebných funkcií, ako napríklad pridanie odkazu, kde pieseň nájdem či jej samotné nahratie... 
+
+
+Lubomir Herko
+No ja som napr. nikde este nevidel moznost zadat melodiu. V akomkolvek formate. A pripadne ju vediet aj prehrat. Ked som zobral spevokol v nasej farnosti pred tromi rokmi, tak to bol moj najvacsi pain. Mal som akordy, text a vsetko, ale melodie som hladal po youtube a nakoniec ked som sa nejaku piesen aj naucil, tak moji spevaci zahlasili, ze oni to poznaju inak.
+Takze u mna by idealna appka mala:
+- dobre vyzerat, aj vytlacene
+- brat "songs" format zapisu piesne (http://songs.sourceforge.net/songsdoc/songs.html#sec5.2)
+- transponovat
+- piesne otagovat (ked hladam piesne na obetovanie/prijimanie/post/vianoce, ...
+- moznost definovat tab pre divne akordy
+- moznost vyplut PDF - pre spevakov, len texty
+- moznost vyplut PDF pre nastroje s akordami
+- mozno nieco na premietanie, teraz su v mode velke displaye v kostoloch, mame ho aj v Krupine
+- vytvaranie setov (napr chvaly, omse)
+- ak chcem aby sa piesne na omsiach neopakovali, tak by som bol rad keby mi appka povedala, ci som danu piesen nehral napr. minuly tyzden na omsi. Na to teraz pouzivam Google Spreadsheet. Toto je priznam sa divna feature, mozno velmi subjektivna pre mna, ale nice to have.
+
+
+Lubomir Herko
+Matej v podstate chcem filter. Na pôst, vianoce, piesne vhodné na úvod omše a podobne.. nieco ako maju v spevniku saleziani. To je jedna z features.
+
+
+Miroslav Ištvan
+ahojte, to fakt chceme taku web/mobilnu appku zadarmo? Ja osobne by som taky produkt, ktory mi bude vyhovovat pri sluzbe chval a kde by som si mohol zapisovat svoje akordy ku piesnam a minat tak serverove zdroje a databazu ozaj podporil financne.
+Matej, kamarat, len sa prosim neunahli a neprogramujte appky rychlo a na kolene, lebo to moze byt ozaj premarneny cas, ked existuje uz vela roznych aplikacii a vidis ze malo komu vyhovuju. Pekne si zacal so zbieranim poziadaviek. Len tak pokracuj a urob si prehlad, co by sa komu hodilo. Myslim ze je nas dost tych, co vieme, co by sme asi od spevnika/prezentera ocakavali a tak vieme povedat ci by sme to co sa chystas naprogramovat pouzili alebo nie.
+Z mojho pohladu ma 4334.sk ma velky potencial ako zakladny server, kde su ulozene piesne. Co by mne vyhovovalo:
+1. mam na 4334 svoj zoznam piesni, kde som si povyberal z tych co uz su napisane Matejom a ktore hram + kde viem doplnat aj svoje piesne, ktore vidim len ja a moji kapelnici
+2. viem napisat viacero verzii akordov ku 1 piesni
+3. viem pridat/upravit piesen/akordy cez webovu appku, alebo aj desktop prezenter ( cez prezenter aj ulozit na 4334 server)
+4. viem si vytvorit setlist pred sluzbou a ulozit na 4334 server
+5. viem si spustit desktop prezenter na chvalach, zapojit ho na projektor, wifi, klikom na sync tlacidlo, si stiahnut vsetky upravene/nove piesne a tiez aj upravene/nove setlisty od posledneho syncu z hlavneho 4334 servera
+6. viem premietat setlist bud cez desktop prezenter alebo aj mobilnu appku. Realne to nemusi byt mobilna appka ale web aplikacia, ktora sa vie pripojit na spravnu URL, ktoru spristupni desktop prezenter cez WIFI. Takze premietacej sluzbe staci vediet na aku URL pristupit z bezneho prehliadaca.
+
+
+Matej Hudáček
+badge icon
+Miroslav Ištvan vďaka za komentár. súhlasím s tebou, zatiaľ je to len vo fáze experimentov, uvažovania a hľadania možností.
+reagoval som na chlapov hore, lebo načrtli možnosť DIY appky, tak som si povedal, že asi je už čas, kedy doba pokročila a nezaškodí aspoň zbierať názory (predsa, táto skupina má sotva 6 mesiacov, takže načasovanie je imho primerané).
+víziou je nateraz vytvoriť appku, ktorá by predstavovala offline verziu webu – nič viac, nič menej.
+ak sa to podarí, posunieme sa ďalej, k ďalším fičurinkám.
+kým je web v takom stave, akom je, určite nebudem napochytro organizovať vývoj nejakej polotovarovej appky 
+
+
+Miroslav Ištvan
+Cize si viem predstavit takyto produkt 
+1. 4334 basic verzia obsahovala desktop prezenter, ktory vie stiahnut zakladne 4334 piesne a cez WIFI spristupnit URL pre ovladanie setlistu.
+2. 4334 PRO verzia  spoplatena jednorazovym poplatkom + pripadne priplatky sa nove super features  by obsahovala 4334 basic + moznost vlastneho zoznamu piesni aj s vlastnymi akordami.
+
+
