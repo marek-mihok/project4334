@@ -27,12 +27,12 @@ const NewsFeedScreen: FunctionComponent = ({
               navigation.navigate('SongDetail');
             }}
           />
-          <Button
+          {/* <Button
             title="Flex Wrap TEST"
             onPress={() => {
               navigation.navigate('FlexWrapTest');
             }}
-          />
+          /> */}
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Piesne podľa témy</Text>
