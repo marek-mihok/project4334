@@ -16,36 +16,62 @@ const Header: FunctionComponent<Props> = ({title, children, icon}) => {
   };
 
   return (
-    <View>
+    // <View>
+    <View
+      style={{
+        // overflow: 'hidden',
+        position: 'absolute',
+        width: '100%',
+        paddingBottom: 14,
+        // backgroundColor: 'blue',
+      }}>
       <Appbar.Header dark={false} style={styles.header}>
         {/* <Appbar.Action icon={icon || 'arrow-left'} onPress={onPressBack} /> */}
-        <Appbar.BackAction onPress={onPressBack} />
-        <Appbar.Content
-          style={styles.content}
-          title={<Text style={styles.title}>{title}</Text>}
-          //   subtitle={<Text style={styles.subtitle}>{title}</Text>}
-        />
+        <Appbar.BackAction onPress={onPressBack} color={'#000'} />
+        <View style={styles.titleWrapper}>
+          <Text style={styles.songTitle}>{title}</Text>
+        </View>
+        {/* <Appbar.Content
+        style={styles.content}
+        title={<Text style={styles.title}>{title}</Text>}
+        // subtitle={<Text style={styles.subtitle}>{title}</Text>}
+      /> */}
         {children}
       </Appbar.Header>
     </View>
+    // </View>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    shadowOpacity: 0,
-    elevation: 0,
-    shadowColor: 'transparent',
-    backgroundColor: 'transparent',
+    // shadowOpacity: 0,
+    // elevation: 0,
+    // shadowColor: 'transparent',
+    // borderRadius: 14,
+    // backgroundColor: 'transparent',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+    // justifyContent: 'center',
+    // zIndex: 10000,
+    // backgroundColor: '#555',
   },
   content: {
-    // alignItems: 'center'
+    alignItems: 'center',
     // backgroundColor: 'yellow',
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: 'black',
+    // color: '#fff',
     textTransform: 'uppercase',
   },
   subtitle: {
@@ -53,6 +79,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: 'white',
+  },
+  titleWrapper: {
+    position: 'absolute',
+    top: 13,
+    width: '100%',
+    backgroundColor: 'transparent',
+    // backgroundColor: 'red',
+    alignSelf: 'center',
+    // justifyContent: 'center',
+    // alignContent: 'center',
+    // alignItems: 'center',
+  },
+  songTitle: {
+    textAlign: 'center',
+    alignSelf: 'center',
+    textTransform: 'uppercase',
+    fontSize: 24,
+    fontWeight: '700',
+    // backgroundColor: 'yellow',
   },
 });
 

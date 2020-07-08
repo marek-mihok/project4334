@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import {View, ScrollView, StyleSheet, Text} from 'react-native';
-// import {Text} from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {View, ScrollView, StyleSheet,  Image} from 'react-native';
+import {Text} from 'react-native-paper';
 import GreenButton from '../components/Button';
 import Header from '../components/Header';
 import Spacing from '../components/Spacing';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
 // TIP: https://medium.com/@rossbulat/theming-in-react-native-explained-ac40d0d2e15c
@@ -15,6 +16,26 @@ const chordSheetCrdString = `{c: intro}{c: 1:}\n[h] Nemôžem [D]prestať [G]mys
 const SongDetailScreen = () => {
   const [chordsVisible, setChordsVisible] = useState(true);
   const [captionsVisible, setCaptionsVisible] = useState(false);
+
+  const [textSizes, setTextSizes] = useState([16,19,22,25]);
+
+  const rotate = ( array: number[], times: number ) => {
+    array = array.slice();
+    while( times-- ){
+      let temp = array.shift();
+      array.push( temp )
+    }
+    return array;
+  }
+
+// https://4334.sk/wp-json/wp/v2/song?orderby=date&order=desc&orderby=date&after=2020-05-24T13:00:00
+
+  const userAction = async () => {
+    const response = await fetch('https://4334.sk/wp-json/wp/v2/song/');
+    const myJson = await response.json(); //extract JSON from the http response
+    // do something with myJson
+    console.log(myJson)
+  }
 
   const chordSheetRows = chordSheetCrdString.split('\n'); // TODO: what if there is \n\n
 
@@ -38,18 +59,19 @@ const SongDetailScreen = () => {
             caption.startsWith('{ci:'))
         ) {
           return (
+            // TODO: format caption
             <View
               key={captionIdx + 'view'}
               style={chordLyricsStyles.captionWrapper}>
               <Text
                 key={captionIdx + 'text'}
                 style={[
-                  chordLyricsStyles.caption,
+                  chordLyricsStyles.caption, {fontSize: textSizes[0]},
                   caption.startsWith('{ci:')
                     ? chordLyricsStyles.captionItalic
                     : null,
                 ]}>
-                {caption}
+                {caption} 
               </Text>
             </View>
           );
@@ -70,13 +92,13 @@ const SongDetailScreen = () => {
     <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
-          <Text style={chordLyricsStyles.chordsText}>{rowStart[0].slice(1,-2)}</Text>
+          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{rowStart[0].slice(1,-2)}</Text>
         </View>
       ) : null}
     </View>
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={chordLyricsStyles.lyrics}>
-        <Text style={chordLyricsStyles.lyricsText} />
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]} />
       </View>
     </View>
   </View> ) : null;
@@ -84,21 +106,19 @@ const SongDetailScreen = () => {
   const rowMiddleParsed = rowMiddle?.map(row => {
     let chord = row.match(/(\[[^\[\]]*\])/g);
     let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
-console.log('chord:', chord);
-console.log('lyrics:', lyrics);
 return(
     <View style={chordLyricsStyles.chordsLyricsWrapper}>
     { chord && <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
-          <Text style={chordLyricsStyles.chordsText}>{chord[0].slice(1,-1)}</Text>
+          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{chord[0].slice(1,-1)}</Text>
         </View>
       ) : null}
     </View>  }
     {lyrics &&
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={chordLyricsStyles.lyrics}>
-        <Text style={chordLyricsStyles.lyricsText}>{lyrics[0]}</Text>
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}>{lyrics[0]}</Text>
       </View>
     </View>}
   </View>)
@@ -108,13 +128,13 @@ return(
     <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
-          <Text style={chordLyricsStyles.chordsText}>{rowEnd[0].slice(2,-1)}</Text>
+          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{rowEnd[0].slice(2,-1)}</Text>
         </View>
       ) : null}
     </View>
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={chordLyricsStyles.lyrics}>
-        <Text style={chordLyricsStyles.lyricsText} />
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]} />
       </View>
     </View>
   </View> ) : null;;
@@ -133,17 +153,18 @@ return(
       <Header title={songTitle} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ paddingBottom: 140 }} // TODO: adjust based on button width and device screen
+        contentContainerStyle={{ paddingTop: 24 + 54, paddingBottom: 120 }} // TODO: adjust padding bottom based on button width and device screen; adjust padding top based on header height
         style={styles.scrollView}>
         <View style={styles.body}>
-          {/* <Text style={styles.songTitle}>{songTitle}</Text */}
-          <Spacing size="md" />
+          {/* <Text style={styles.songTitle}>{songTitle}</Text> */}
+          {/* <Spacing size="md" /> */}
+        
           <View style={chordLyricsStyles.lyricsContainer}>
            {chordSheet}
           </View>
         </View>
       </ScrollView>
-      <View style={styles.buttonWrapper}>
+      {/* <View style={styles.buttonWrapper}>
         <GreenButton
           mode="contained"
           uppercase
@@ -162,6 +183,16 @@ return(
           }} style={styles.button}>
           Captions
         </GreenButton>
+      </View> */}
+      <View style={styles.bottomTabs}>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></View>
+{/* <View style={styles.tabDivider}></View> */}
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 24, width: 24}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></View>
+{/* <View style={styles.tabDivider}></View> */}
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {userAction();} }><Text style={{fontSize: 18, color: '#fff'}}>+1</Text></TouchableHighlight></View>
+{/* <View style={styles.tabDivider}></View> */}
+<View style={styles.tab} ><Text style={{fontSize: 18, color: 'white'}}>-1</Text></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setTextSizes(rotate(textSizes, 1))}}><Text style={{fontSize: 18, color: 'white'}}>Aa</Text></TouchableHighlight></View>
       </View>
     </>
   );
@@ -240,6 +271,42 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf: 'center',
+  },
+  bottomTabs: {
+    position: 'absolute', 
+    bottom: 16, 
+    alignSelf: 'center',
+    marginHorizontal: 16,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    backgroundColor: '#44d480',
+    borderRadius: 14,
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+    opacity: 0.95
+  },
+  tab: {
+    flex: 1,
+    height: 80,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabTouchable: {    alignContent: 'center',
+  alignItems: 'center',
+  justifyContent: 'center', height: 64, width: 64, borderRadius: 14},
+  tabDivider: {
+    height: 36,
+    width: 0.65,
+    backgroundColor: '#fff',
+    opacity: 0.6,
   }
 });
 
