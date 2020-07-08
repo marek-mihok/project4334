@@ -11,21 +11,75 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const songTitle = 'Verný Boh';
 //const chordSheet = `{c: intro: 2x}\r\n\r\n[E][c#][A]\r\n\r\n{c: 1:}\r\n\r\n[E] Priblížiť sa k láske, [c#] ktorá seba [A]dáva\r\n[E] priblížiť sa k láske, [c#] ktorá všetko [A]žiada\r\n\r\n{c: prechorus:}\r\n\r\n[f#] Do [E/G#]svojej [H]prítomnosti [E/G#] zahaľ [A]nás\r\n[f#] a v [E/G#]tôni [H]svojich krídel [E/G#] ukry [A]nás\r\n\r\n{c: chorus:}\r\n\r\nVždy byť [E]blíz[H]ko, [c#][A] po tom [E]tú[H]žim[c#][A]\r\ntvoja [E]lás[H]ka [c#][A] je môj [E][c#]ú[H]kryt\r\n\r\n{c: Interlude}\r\n\r\n{c: 1}\r\n\r\n{c: prechorus}\r\n\r\n{c: chorus 2x}\r\n\r\n{c: interlude 2: 2x}\r\n\r\n[A][c#][A][E][H]\r\n\r\n{c: bridge: 6x}\r\n\r\nEmanu[f#]el, Emanu[c#]el\r\nEmanu[f#]el, Emanu[E][H]el\r\n\r\n{c: woah outro: 2x}\r\n\r\n[f#][c#][f#][E][H]`;
-const chordSheetCrdString = `{c: intro}{c: 1:}\n[h] Nemôžem [D]prestať [G]myslieť na teba [a]\n[h] nemôžem [D] sa ťa stria[G/F]sť\n[h] Si ako [D]oheň v mojom [G]vnútri, čo páli ma\n[h] p[D]áliš ma[G]\n{c: interlude: 2x}\n[e][G][C]\n{c: 1}{c: prechorus:}\n[e] Si [G]všetko, čo [C]chcem\n[e] Si [G]všetko, čo [C]mám\n[e] A aj keď [D]zdá sa, že sp[E][c#][H]íš\nja tvoje meno zavo[C]lám\nproti búrkam, proti tmám\n{c: chorus: 2x}\nSi [G]verný Boh a [D]verný Kráľ\n[e]dokončíš dielo, [C]ktoré si vo mne začal\n[G]Verný Boh a [D]verný Kráľ\n[e]nevzdáš sa snov, ktoré si [C]so mnou snívať začal\n{c: interlude}\n[G][D][e][C]\n{c: bridge: 4x}\n[G] Ohlásim zo striech\nže [h]ľúbiš mňa a ja ľúbim teba\n[e] Ohlásim zo striech\nže si [C]verný a verný a verný Kráľ\n(si verný a verný Kráľ)\n{c: 1}{c: interlude}{c: 1}{c: prechorus}{c: chorus 2x}{c: interlude}{c: bridge 4x}{c: bridge 2: 4x}\nSi verný [G]Kráľ\nWoa[h]h\nSi verný [e]Kráľ\nWoa[C]h\n{c: outro}`;
+const chordSheetCrdString = `{c: intro}{c: 1:}\n[h] Nemôžem [D]prestať [G]myslieť na teba [a]\n[h] nemôžem [D] sa ťa stria[G/F]sť\n[h] Si ako [D]oheň v mojom [G]vnútri, čo páli ma\n[h] p[D]áliš ma[G]\n{c: interlude: 2x}\n[e][G][C]\n{c: 1}{c: prechorus:}\n[e] Si [G]všetko, čo [C]chcem\n[e] Si [G]všetko, čo [C]mám\n[e] A aj keď [D]zdá sa, že sp[E][c#][H]íš\nja tvoje meno zavo[C]lám\nproti búrkam, proti tmám\n{c: chorus: 2x}\nSi [G]verný Boh a [D]verný Kráľ\n[e]dokončíš dielo, [C]ktoré si vo mne začal\n[G]Verný Boh a [D]verný Kráľ\n[e]nevzdáš sa snov, ktoré si [C]so mnou snívať začal\n{c: interlude}\n[G][D][e][C]\n{c: bridge: 4x}\n[G][Fmaj7] Ohlásim zo striech\nže [h]ľúbiš mňa a ja ľúbim teba\n[e] Ohlásim zo striech\nže si [C]verný a verný a verný Kráľ\n(si verný a verný Kráľ)\n{c: 1}{c: interlude}{c: 1}{c: prechorus}{c: chorus 2x}{c: interlude}{c: bridge 4x}{c: bridge 2: 4x}\nSi verný [G]Kráľ\nWoa[h]h\nSi verný [e]Kráľ\nWoa[C]h\n{c: outro}`;
 
 const SongDetailScreen = () => {
   const [chordsVisible, setChordsVisible] = useState(true);
   const [captionsVisible, setCaptionsVisible] = useState(false);
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
+  // TODO: horizontal line under multiple chords
+  // TODO: finish transposition: reversed array rotation, transpo indicator, transpo clear
+  const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
 
-  const rotate = ( array: number[], times: number ) => {
+  const rotate = ( array: any[], times: number, reverse: boolean = false ) => {
     array = array.slice();
     while( times-- ){
-      let temp = array.shift();
-      array.push( temp )
+      if(reverse){
+        array.unshift(array.pop());
+      }else{
+        array.push( array.shift() )
+      }
     }
     return array;
+  }
+
+  const transpose = (chord: string) => {
+    if(chord.includes('/')){
+      const chordSplit = chord.split('/');
+      return transpose(chordSplit[0]) + '/' + transpose(chordSplit[1]);
+    }
+    let toneExtracted = chord.match(/^[a-zA-Z][#]?/g) || chord.charAt(0);
+    let chordTone : string = toneExtracted && toneExtracted[0];
+    let chordIndex : number | null = getChordIndex(chordTone);
+    let isMajor: boolean = (chordTone.charCodeAt(0) >= 65 && chordTone.charCodeAt(0) <= 90);
+    if(chordIndex !== null){
+      let chordToneTransposed = isMajor ? chordsMajor[chordIndex] : chordsMajor[chordIndex].toLowerCase();
+      return chordToneTransposed + chord.slice(toneExtracted[0].length || 1);
+    }else{
+      return chord;
+    }
+  }
+
+  const getChordIndex = (chordTone: string) => {
+    switch(chordTone.toUpperCase()){
+      case 'C':
+        return 0;
+      case 'C#':
+        return 1;
+      case 'D':
+        return 2;
+      case 'D#':
+        return 3;
+      case 'E':
+        return 4;
+      case 'F':
+        return 5;
+      case 'F#':
+        return 6;
+      case 'G':
+        return 7;
+      case 'G#':
+        return 8;
+      case 'A':
+        return 9;
+      case 'A#':
+        return 10;
+      case 'H':
+        return 11;
+      default:
+        return null;
+    }
   }
 
 // https://4334.sk/wp-json/wp/v2/song?orderby=date&order=desc&orderby=date&after=2020-05-24T13:00:00
@@ -54,12 +108,13 @@ const SongDetailScreen = () => {
         }
         if (
           captionsVisible &&
-          (caption.startsWith('{column_break') ||
-            caption.startsWith('{c:') ||
+          ( caption.startsWith('{c:') ||
             caption.startsWith('{ci:'))
         ) {
+          const regexCaption = RegExp(/^\{[c|ci]{1,2}\:[ ]?(.*)\}$/, 'g');
+          const captionMatch = regexCaption.exec(caption);
+          let captionFormatted = captionMatch && captionMatch[1] ? captionMatch[1] : '';
           return (
-            // TODO: format caption
             <View
               key={captionIdx + 'view'}
               style={chordLyricsStyles.captionWrapper}>
@@ -71,7 +126,7 @@ const SongDetailScreen = () => {
                     ? chordLyricsStyles.captionItalic
                     : null,
                 ]}>
-                {caption} 
+                {captionFormatted} 
               </Text>
             </View>
           );
@@ -92,7 +147,7 @@ const SongDetailScreen = () => {
     <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
-          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{rowStart[0].slice(1,-2)}</Text>
+          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{transpose(rowStart[0].slice(1,-2))}</Text>
         </View>
       ) : null}
     </View>
@@ -111,7 +166,7 @@ return(
     { chord && <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
-          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{chord[0].slice(1,-1)}</Text>
+          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{transpose(chord[0].slice(1,-1))}</Text>
         </View>
       ) : null}
     </View>  }
@@ -128,7 +183,7 @@ return(
     <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
-          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{rowEnd[0].slice(2,-1)}</Text>
+          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{transpose(rowEnd[0].slice(2,-1))}</Text>
         </View>
       ) : null}
     </View>
@@ -188,10 +243,8 @@ return(
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></View>
 {/* <View style={styles.tabDivider}></View> */}
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 24, width: 24}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></View>
-{/* <View style={styles.tabDivider}></View> */}
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {userAction();} }><Text style={{fontSize: 18, color: '#fff'}}>+1</Text></TouchableHighlight></View>
-{/* <View style={styles.tabDivider}></View> */}
-<View style={styles.tab} ><Text style={{fontSize: 18, color: 'white'}}>-1</Text></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1))} }><Text style={{fontSize: 18, color: '#fff'}}>+1</Text></TouchableHighlight></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1, true))} }><Text style={{fontSize: 18, color: '#fff'}}>-1</Text></TouchableHighlight></View>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setTextSizes(rotate(textSizes, 1))}}><Text style={{fontSize: 18, color: 'white'}}>Aa</Text></TouchableHighlight></View>
       </View>
     </>
