@@ -17,19 +17,22 @@ import SongDetailScreen from './screens/SongDetailScreen';
 import FlexWrapTest from './screens/FlexWrapTest';
 import {Provider as PaperProvider} from 'react-native-paper';
 import theme from './theme';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="NewsFeed" headerMode="none">
-          <Stack.Screen name="NewsFeed" component={NewsFeedScreen} />
-          <Stack.Screen name="SongDetail" component={SongDetailScreen} />
-          <Stack.Screen name="FlexWrapTest" component={FlexWrapTest} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="NewsFeed" headerMode="none">
+            <Stack.Screen name="NewsFeed" component={NewsFeedScreen} />
+            <Stack.Screen name="SongDetail" component={SongDetailScreen} />
+            <Stack.Screen name="FlexWrapTest" component={FlexWrapTest} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
     </PaperProvider>
   );
 };
