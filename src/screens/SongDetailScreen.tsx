@@ -242,9 +242,9 @@ return(
       <View style={styles.bottomTabs}>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></View>
 {/* <View style={styles.tabDivider}></View> */}
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 24, width: 24}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></View>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1))} }><Text style={{fontSize: 18, color: '#fff'}}>+1</Text></TouchableHighlight></View>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1, true))} }><Text style={{fontSize: 18, color: '#fff'}}>-1</Text></TouchableHighlight></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 16, width: 36}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1))} } disabled={!chordsVisible} ><Text style={[{fontSize: 18, color: '#fff'}, !chordsVisible && {opacity: 0.5}]}>+1</Text></TouchableHighlight></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1, true))} } disabled={!chordsVisible}><Text style={[{fontSize: 18, color: '#fff'}, !chordsVisible && {opacity: 0.5}]}>-1</Text></TouchableHighlight></View>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setTextSizes(rotate(textSizes, 1))}}><Text style={{fontSize: 18, color: 'white'}}>Aa</Text></TouchableHighlight></View>
       </View>
     </>
