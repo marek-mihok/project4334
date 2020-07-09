@@ -2,6 +2,8 @@ import React, {FunctionComponent} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, View} from 'react-native';
 import {Appbar, Text} from 'react-native-paper';
+import {TouchableHighlight} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type Props = {
   title: string;
@@ -16,40 +18,40 @@ const Header: FunctionComponent<Props> = ({title, children, icon}) => {
   };
 
   return (
-    // <View>
     <View
       style={{
-        // overflow: 'hidden',
         position: 'absolute',
         width: '100%',
         paddingBottom: 14,
         // backgroundColor: 'blue',
       }}>
-      <Appbar.Header dark={false} style={styles.header}>
-        {/* <Appbar.Action icon={icon || 'arrow-left'} onPress={onPressBack} /> */}
-        <Appbar.BackAction onPress={onPressBack} color={'#000'} />
-        <View style={styles.titleWrapper}>
-          <Text style={styles.songTitle}>{title}</Text>
+      <View style={styles.header}>
+        <View style={styles.backButtonWrapper}>
+          <TouchableHighlight
+            style={styles.backButton}
+            onPress={onPressBack}
+            underlayColor={'#bbb'}>
+            <Icon name="arrow-left" size={24} />
+          </TouchableHighlight>
         </View>
-        {/* <Appbar.Content
-        style={styles.content}
-        title={<Text style={styles.title}>{title}</Text>}
-        // subtitle={<Text style={styles.subtitle}>{title}</Text>}
-      /> */}
+        <View style={styles.titleWrapper}>
+          <Text
+            style={styles.songTitle}
+            ellipsizeMode="tail"
+            // adjustsFontSizeToFit={true}
+            numberOfLines={1}>
+            {title}
+          </Text>
+        </View>
         {children}
-      </Appbar.Header>
+      </View>
     </View>
-    // </View>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    // shadowOpacity: 0,
-    // elevation: 0,
-    // shadowColor: 'transparent',
-    // borderRadius: 14,
-    // backgroundColor: 'transparent',
+    height: 58,
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
@@ -59,45 +61,37 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
     elevation: 12,
-    // justifyContent: 'center',
-    // zIndex: 10000,
-    // backgroundColor: '#555',
-  },
-  content: {
     alignItems: 'center',
-    // backgroundColor: 'yellow',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: 'black',
-    // color: '#fff',
-    textTransform: 'uppercase',
-  },
-  subtitle: {
-    padding: 8,
-    fontSize: 14,
-    fontWeight: '400',
-    color: 'white',
+    flexDirection: 'row',
   },
   titleWrapper: {
-    position: 'absolute',
-    top: 13,
-    width: '100%',
+    flexGrow: 1,
     backgroundColor: 'transparent',
-    // backgroundColor: 'red',
+    paddingHorizontal: 58,
     alignSelf: 'center',
-    // justifyContent: 'center',
-    // alignContent: 'center',
-    // alignItems: 'center',
   },
   songTitle: {
     textAlign: 'center',
     alignSelf: 'center',
     textTransform: 'uppercase',
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: '700',
-    // backgroundColor: 'yellow',
+  },
+  backButton: {
+    height: 48,
+    width: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 90,
+  },
+  backButtonWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: 58,
+    width: 58,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

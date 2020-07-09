@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, StyleSheet,  Image} from 'react-native';
+import {View, ScrollView, StyleSheet,  Image, Animated} from 'react-native';
 import {Text} from 'react-native-paper';
-import GreenButton from '../components/Button';
 import Header from '../components/Header';
 import Spacing from '../components/Spacing';
 import { TouchableHighlight } from 'react-native-gesture-handler';
@@ -21,6 +20,16 @@ const SongDetailScreen = () => {
   // TODO: horizontal line under multiple chords
   // TODO: finish transposition: reversed array rotation, transpo indicator, transpo clear
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
+
+  // animation for bottom tabs
+  const btScrollY = new Animated.Value(0);
+  const btDiffClamp = Animated.diffClamp(btScrollY, 0, 96);
+  const btTranslateY = btDiffClamp.interpolate({inputRange:[0,96], outputRange:[0,96]});
+
+  // animation for header
+  const headerScrollY = new Animated.Value(0);
+  const headerDiffClamp = Animated.diffClamp(headerScrollY, 0, 96);
+  const headerTranslateY = headerDiffClamp.interpolate({inputRange:[0,58], outputRange:[0,-58]});
 
   const rotate = ( array: any[], times: number, reverse: boolean = false ) => {
     array = array.slice();
@@ -205,11 +214,17 @@ return(
 
   return (
     <>
+    <Animated.View style={{transform:[{translateY: headerTranslateY}]}}>
       <Header title={songTitle} />
+    </Animated.View>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{ paddingTop: 24 + 54, paddingBottom: 120 }} // TODO: adjust padding bottom based on button width and device screen; adjust padding top based on header height
-        style={styles.scrollView}>
+        style={styles.scrollView}
+        onScroll={(event) => {
+          btScrollY.setValue(event.nativeEvent.contentOffset.y);
+          headerScrollY.setValue(event.nativeEvent.contentOffset.y);
+        }}>
         <View style={styles.body}>
           {/* <Text style={styles.songTitle}>{songTitle}</Text> */}
           {/* <Spacing size="md" /> */}
@@ -219,26 +234,7 @@ return(
           </View>
         </View>
       </ScrollView>
-      {/* <View style={styles.buttonWrapper}>
-        <GreenButton
-          mode="contained"
-          uppercase
-          onPress={() => {
-            setChordsVisible(!chordsVisible);
-          }}
-          style={styles.button}>
-          Akordy
-        </GreenButton>
-        <Spacing size="sm" />
-        <GreenButton
-          mode="contained"
-          uppercase
-          onPress={() => {
-            setCaptionsVisible(!captionsVisible);
-          }} style={styles.button}>
-          Captions
-        </GreenButton>
-      </View> */}
+      <Animated.View style={{transform:[{translateY: btTranslateY}]}}>
       <View style={styles.bottomTabs}>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></View>
 {/* <View style={styles.tabDivider}></View> */}
@@ -247,6 +243,7 @@ return(
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1, true))} } disabled={!chordsVisible}><Text style={[{fontSize: 18, color: '#fff'}, !chordsVisible && {opacity: 0.5}]}>-1</Text></TouchableHighlight></View>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setTextSizes(rotate(textSizes, 1))}}><Text style={{fontSize: 18, color: 'white'}}>Aa</Text></TouchableHighlight></View>
       </View>
+      </Animated.View>
     </>
   );
 };
@@ -316,14 +313,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontSize: 24,
     fontWeight: '700',
-  },
-  buttonWrapper: {
-    position: 'absolute', 
-    bottom: 20, 
-    alignSelf: 'center',
-  },
-  button: {
-    alignSelf: 'center',
   },
   bottomTabs: {
     position: 'absolute', 

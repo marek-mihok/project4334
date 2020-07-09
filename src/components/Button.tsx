@@ -6,3 +6,17 @@ const GreenButton: FunctionComponent = props => {
 };
 
 export default GreenButton;
+
+/* usecase:
+
+<GreenButton
+mode="contained"
+uppercase
+onPress={() => {
+  setChordsVisible(!chordsVisible);
+}}
+style={styles.button}>
+Akordy
+</GreenButton>
+
+*/
