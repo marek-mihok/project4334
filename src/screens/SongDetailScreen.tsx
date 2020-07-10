@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import {View, ScrollView, StyleSheet,  Image, Animated, } from 'react-native';
+import React, {useState, FunctionComponent} from 'react';
+import {View, ScrollView, StyleSheet,  Image, Animated, Platform, } from 'react-native';
 import {Text, Title,} from 'react-native-paper';
 import Header from '../components/Header';
 import Spacing from '../components/Spacing';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
+import InsetShadow from 'react-native-inset-shadow'
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
 // TIP: https://medium.com/@rossbulat/theming-in-react-native-explained-ac40d0d2e15c
@@ -13,16 +14,25 @@ const songTitle = 'Verný Boh';
 //const chordSheet = `{c: intro: 2x}\r\n\r\n[E][c#][A]\r\n\r\n{c: 1:}\r\n\r\n[E] Priblížiť sa k láske, [c#] ktorá seba [A]dáva\r\n[E] priblížiť sa k láske, [c#] ktorá všetko [A]žiada\r\n\r\n{c: prechorus:}\r\n\r\n[f#] Do [E/G#]svojej [H]prítomnosti [E/G#] zahaľ [A]nás\r\n[f#] a v [E/G#]tôni [H]svojich krídel [E/G#] ukry [A]nás\r\n\r\n{c: chorus:}\r\n\r\nVždy byť [E]blíz[H]ko, [c#][A] po tom [E]tú[H]žim[c#][A]\r\ntvoja [E]lás[H]ka [c#][A] je môj [E][c#]ú[H]kryt\r\n\r\n{c: Interlude}\r\n\r\n{c: 1}\r\n\r\n{c: prechorus}\r\n\r\n{c: chorus 2x}\r\n\r\n{c: interlude 2: 2x}\r\n\r\n[A][c#][A][E][H]\r\n\r\n{c: bridge: 6x}\r\n\r\nEmanu[f#]el, Emanu[c#]el\r\nEmanu[f#]el, Emanu[E][H]el\r\n\r\n{c: woah outro: 2x}\r\n\r\n[f#][c#][f#][E][H]`;
 const chordSheetCrdString = `{c: intro}{c: 1:}\n[h] Nemôžem [D]prestať [G]myslieť na teba [a]\n[h] nemôžem [D] sa ťa stria[G/F]sť\n[h] Si ako [D]oheň v mojom [G]vnútri, čo páli ma\n[h] p[D]áliš ma[G]\n{c: interlude: 2x}\n[e][G][C]\n{c: 1}{c: prechorus:}\n[e] Si [G]všetko, čo [C]chcem\n[e] Si [G]všetko, čo [C]mám\n[e] A aj keď [D]zdá sa, že sp[E][c#][H]íš\nja tvoje meno zavo[C]lám\nproti búrkam, proti tmám\n{c: chorus: 2x}\nSi [G]verný Boh a [D]verný Kráľ\n[e]dokončíš dielo, [C]ktoré si vo mne začal\n[G]Verný Boh a [D]verný Kráľ\n[e]nevzdáš sa snov, ktoré si [C]so mnou snívať začal\n{c: interlude}\n[G][D][e][C]\n{c: bridge: 4x}\n[G][Fmaj7] Ohlásim zo striech\nže [h]ľúbiš mňa a ja ľúbim teba\n[e] Ohlásim zo striech\nže si [C]verný a verný a verný Kráľ\n(si verný a verný Kráľ)\n{c: 1}{c: interlude}{c: 1}{c: prechorus}{c: chorus 2x}{c: interlude}{c: bridge 4x}{c: bridge 2: 4x}\nSi verný [G]Kráľ\nWoa[h]h\nSi verný [e]Kráľ\nWoa[C]h\n{c: outro}`;
 
-const SongDetailScreen = () => {
-  const [chordsVisible, setChordsVisible] = useState(true);
+type Props = {
+  songId: number;
+}
+
+const SongDetailScreen: FunctionComponent<Props> = ({songId}) => {
+  const [chordsVisible, setChordsVisible] = useState(false);
   const [captionsVisible, setCaptionsVisible] = useState(false);
   const insets = useSafeArea();
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
-  // TODO: QR Code playlist share
-  // TODO: fix ios alone chord vertical align
+  // TODO: add metadata
+  // TODO: zobrazit prazdne riadky, napriklad pred samostatnymi akordami bez textu
+  // TODO: spotify support
+  // TODO: disable scroll animations when text does not overflow screen
+  // TODO: REST download
   // TODO: horizontal line under multiple chords
+  // TODO: check if highlighted active bottom tabs work properly on all devices
   // TODO: finish transposition: transpo indicator, transpo clear
+  // TODO: QR Code playlist share
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
 
   // animation for bottom tabs
@@ -96,15 +106,6 @@ const SongDetailScreen = () => {
     }
   }
 
-// https://4334.sk/wp-json/wp/v2/song?orderby=date&order=desc&orderby=date&after=2020-05-24T13:00:00
-
-  const userAction = async () => {
-    const response = await fetch('https://4334.sk/wp-json/wp/v2/song/');
-    const myJson = await response.json(); //extract JSON from the http response
-    // do something with myJson
-    console.log(myJson)
-  }
-
   const chordSheetRows = chordSheetCrdString.split('\n'); // TODO: what if there is \n\n
 
   const chordSheet = chordSheetRows.map((row, rowIdx) => {
@@ -167,7 +168,7 @@ const SongDetailScreen = () => {
     </View>
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={chordLyricsStyles.lyrics}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]} />
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]} > </Text>
       </View>
     </View>
   </View> ) : null;
@@ -184,12 +185,11 @@ return(
         </View>
       ) : null}
     </View>  }
-    {lyrics &&
     <View style={chordLyricsStyles.lyricsWrapper}>
-      <View style={chordLyricsStyles.lyrics}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}>{lyrics[0]}</Text>
+      <View style={[chordLyricsStyles.lyrics, {minHeight: textSizes[0] + 8}]}>
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}>{ lyrics[0] || ''}</Text>
       </View>
-    </View>}
+    </View>
   </View>)
   });
 
@@ -203,7 +203,7 @@ return(
     </View>
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={chordLyricsStyles.lyrics}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]} />
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}> </Text>
       </View>
     </View>
   </View> ) : null;;
@@ -238,11 +238,11 @@ return(
       </ScrollView>
       <Animated.View style={{transform:[{translateY: btTranslateY}]}}>
       <View style={styles.bottomTabs}>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></View>
+<View style={styles.tab} ><InsetShadow containerStyle={styles.tabTouchable} elevation={chordsVisible ? 4 : 0} shadowOpacity={chordsVisible ? 0.4 : 0} shadowRadius={3} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></InsetShadow></View>
 {/* <View style={styles.tabDivider}></View> */}
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 16, width: 36}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></View>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1))} } disabled={!chordsVisible} ><Title style={[styles.btText, !chordsVisible && {opacity: 0.5}]}>+1</Title></TouchableHighlight></View>
+<View style={styles.tab} ><InsetShadow containerStyle={[styles.tabTouchable, Platform.OS === 'android' && {borderLeftWidth: 1, borderLeftColor: '#44d480', }]} elevation={captionsVisible ? 4 : 0} shadowOpacity={captionsVisible ? 0.4 : 0} shadowRadius={3} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 16, width: 36}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></InsetShadow></View>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1, true))} } disabled={!chordsVisible}><Title style={[styles.btText, !chordsVisible && {opacity: 0.5}]}>-1</Title></TouchableHighlight></View>
+<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1))} } disabled={!chordsVisible} ><Title style={[styles.btText, !chordsVisible && {opacity: 0.5}]}>+1</Title></TouchableHighlight></View>
 <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setTextSizes(rotate(textSizes, 1))}}><Title style={styles.btText}>Aa</Title></TouchableHighlight></View>
       </View>
       </Animated.View>
@@ -262,7 +262,6 @@ const chordLyricsStyles = StyleSheet.create({
 
   chordsLyricsWrapper: {
     flexDirection: 'column',
-
     justifyContent: 'flex-end',
   },
   chordsWrapper: {
@@ -345,7 +344,7 @@ const styles = StyleSheet.create({
   },
   tabTouchable: {    alignContent: 'center',
   alignItems: 'center',
-  justifyContent: 'center', height: 64, width: 64, borderRadius: 14, },
+  justifyContent: 'center', height: 64, width: 64, borderRadius: 14,  },
   tabDivider: {
     height: 36,
     width: 0.65,

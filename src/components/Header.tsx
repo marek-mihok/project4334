@@ -3,6 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import {
   StyleSheet,
   View,
+  Platform,
   // SafeAreaView,
   // StatusBar,
   // Platform,
@@ -45,7 +46,10 @@ const Header: FunctionComponent<Props> = ({title, children, icon}) => {
             style={styles.backButton}
             onPress={onPressBack}
             underlayColor={'#bbb'}>
-            <Icon name="arrow-left" size={24} />
+            <Icon
+              name={Platform.OS === 'android' ? 'arrow-left' : 'chevron-left'}
+              size={Platform.OS === 'android' ? 24 : 28}
+            />
           </TouchableHighlight>
         </View>
         <View style={styles.titleWrapper}>
@@ -106,6 +110,8 @@ const styles = StyleSheet.create({
     width: 58,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 4, // brings to top on android
+    zIndex: 100, // brings to top on iOS
   },
 });
 
