@@ -25,8 +25,8 @@ const App = () => {
         <AsyncStorageProvider>
           <RestApiDataProvider>
             <NavigationContainer>
-              <MainNavigator />
-              {/* <BottomTabsNavigator /> */}
+              {/* <MainNavigator /> */}
+              <BottomTabsNavigator />
             </NavigationContainer>
           </RestApiDataProvider>
         </AsyncStorageProvider>

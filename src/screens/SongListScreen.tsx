@@ -31,6 +31,7 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
     
     // TODO: Check flat list props
     // TODO: Slovo - nová vášeň - wrong encoding
+    // TODO: show loading inficator while loading in async storage
 
 
     // if icons not showing, link them with: npx react-native link react-native-vector-icons
