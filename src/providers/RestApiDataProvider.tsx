@@ -45,6 +45,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     // TODO: fetch albums and artists
     // TODO: fetch just recent content
 
+
     while (morePagesAvailable) {
       currentPage++;
       const response = await fetch(

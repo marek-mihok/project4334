@@ -8,9 +8,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 type Props = {
   title: string;
   icon?: string;
+  backButtonVisible?: boolean;
+  dark?: boolean;
 };
 
-const Header: FunctionComponent<Props> = ({title, children, icon}) => {
+const Header: FunctionComponent<Props> = ({
+  title,
+  children,
+  icon,
+  backButtonVisible = true,
+  dark = false,
+}) => {
   const navigation = useNavigation();
 
   const onPressBack = () => {
@@ -28,21 +36,24 @@ const Header: FunctionComponent<Props> = ({title, children, icon}) => {
         right: 0,
         overflow: 'hidden',
       }}>
-      <View style={styles.header}>
-        <View style={styles.backButtonWrapper}>
-          <TouchableHighlight
-            style={styles.backButton}
-            onPress={onPressBack}
-            underlayColor={'#bbb'}>
-            <Icon
-              name={Platform.OS === 'android' ? 'arrow-left' : 'chevron-left'}
-              size={Platform.OS === 'android' ? 24 : 28}
-            />
-          </TouchableHighlight>
-        </View>
+      <View style={[styles.header, dark && {backgroundColor: '#363636'}]}>
+        {backButtonVisible && (
+          <View style={styles.backButtonWrapper}>
+            <TouchableHighlight
+              style={styles.backButton}
+              onPress={onPressBack}
+              underlayColor={'#bbb'}>
+              <Icon
+                name={Platform.OS === 'android' ? 'arrow-left' : 'chevron-left'}
+                size={Platform.OS === 'android' ? 24 : 28}
+                color={dark ? '#fff' : '#363636'}
+              />
+            </TouchableHighlight>
+          </View>
+        )}
         <View style={styles.titleWrapper}>
           <Text
-            style={styles.songTitle}
+            style={[styles.songTitle, dark && {color: '#fff'}]}
             ellipsizeMode="tail"
             // adjustsFontSizeToFit={true}
             numberOfLines={1}>
@@ -89,6 +100,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 90,
+    backgroundColor: 'transparent',
   },
   backButtonWrapper: {
     position: 'absolute',
@@ -100,6 +112,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 4, // brings to top on android
     zIndex: 100, // brings to top on iOS
+    backgroundColor: 'transparent',
   },
 });
 

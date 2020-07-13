@@ -16,7 +16,6 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AsyncStorageProvider from './providers/AsyncStorageProvider';
 import RestApiDataProvider from './providers/RestApiDataProvider';
 import MainNavigator from './navigators/MainNavigator';
-import BottomTabsNavigator from './navigators/BottomTabsNavigator';
 
 const App = () => {
   return (
@@ -25,8 +24,7 @@ const App = () => {
         <AsyncStorageProvider>
           <RestApiDataProvider>
             <NavigationContainer>
-              {/* <MainNavigator /> */}
-              <BottomTabsNavigator />
+              <MainNavigator />
             </NavigationContainer>
           </RestApiDataProvider>
         </AsyncStorageProvider>

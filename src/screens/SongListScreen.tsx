@@ -10,28 +10,20 @@ import Header from '../components/Header';
 import { useAsyncStorage } from '../providers/AsyncStorageProvider';
 
 type Props = {
-  navigation: StackNavigationProp<MainParamList, 'SongList'>;
-  route: RouteProp<MainParamList, 'SongList'>;
+  navigation: StackNavigationProp<MainParamList, 'BottomTabs'>;
+  route: RouteProp<MainParamList, 'BottomTabs'>;
   theme: Theme;
 };
 
 const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) => {
   const insets = useSafeArea();
-  // const [loading, setLoading] = useState(true);
-
-  // animation for header
-  const headerScrollY = new Animated.Value(0);
-  const headerDiffClamp = Animated.diffClamp(headerScrollY, 0, 62 + insets.top);
-  const headerTranslateY = headerDiffClamp.interpolate({
-    inputRange: [0, 62 + insets.top],
-    outputRange: [0, -62 - insets.top],
-  });
   
   const { state } = useAsyncStorage();
     
     // TODO: Check flat list props
     // TODO: Slovo - nová vášeň - wrong encoding
     // TODO: show loading inficator while loading in async storage
+    // TODO: Generalize header visibility on top
 
 
     // if icons not showing, link them with: npx react-native link react-native-vector-icons
@@ -42,6 +34,7 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
       onPress={() => {navigation.navigate('SongDetail', {songId: state.songs[item]?.id});}}
     />);
     
+
     return (
       <SafeAreaView
       style={{
@@ -50,20 +43,13 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
         flex: 1,
         backgroundColor: '#fff',
       }}>
-      <Animated.View
-        style={{
-          transform: [{translateY: headerTranslateY}],
-          elevation: 4,
-          zIndex: 100,
-        }}>
-        <Header title={'Piesne'} />
-      </Animated.View>
+        <View style={{elevation: 4, zIndex: 100, }}>
+          <Header title={'Piesne'} backButtonVisible={false}/>
+        </View>
      {state.songs && (<FlatList contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{paddingHorizontal: 16, paddingTop: 12 + 54}} // TODO: adjust padding bottom based on button width and device screen; adjust padding top based on header height
         style={styles.scrollView}
-        onScroll={event => {
-          headerScrollY.setValue(event.nativeEvent.contentOffset.y);
-        }} data={Object.keys(state.songs)} renderItem={renderItem} keyExtractor={item => state.songs[item]?.id} initialNumToRender={24} />)}
+        data={Object.keys(state.songs)} renderItem={renderItem} keyExtractor={item => state.songs[item]?.id} initialNumToRender={24} />)}
 
     </SafeAreaView>
   );

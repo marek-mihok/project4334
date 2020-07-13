@@ -3,6 +3,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {View, Text, ScrollView, StyleSheet, Button} from 'react-native';
 import Spacing from '../components/Spacing';
 import {useAsyncStorage} from '../providers/AsyncStorageProvider';
+import Header from '../components/Header';
 
 const NewsFeedScreen: FunctionComponent = ({
   navigation,
@@ -13,6 +14,9 @@ const NewsFeedScreen: FunctionComponent = ({
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       style={styles.scrollView}>
+      <View style={{elevation: 4, zIndex: 100}}>
+        <Header title={'4334'} backButtonVisible={false} />
+      </View>
       <View style={styles.body}>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Najnovšie články</Text>
@@ -23,28 +27,15 @@ const NewsFeedScreen: FunctionComponent = ({
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Posledne pridané piesne</Text>
-          <Button
-            title="SONG LIST"
-            onPress={() => {
-              navigation.navigate('SongList');
-            }}
-          />
           <Spacing size="md" />
-          <Button
-            title="Byť blízko"
-            onPress={() => {
-              navigation.navigate('SongDetail');
-            }}
-          />
-          <Spacing size="md" />
-          <Button
+          {/* <Button
             title="Async state"
             onPress={() => {
               console.log('test');
               console.log('async Storage:', state);
               console.log('song count:', Object.keys(state.songs).length);
             }}
-          />
+          /> */}
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Piesne podľa témy</Text>
@@ -70,6 +61,8 @@ const styles = StyleSheet.create({
   },
   body: {
     backgroundColor: 'white',
+    // paddingHorizontal: 16,
+    paddingTop: 12 + 54,
   },
   sectionContainer: {
     marginTop: 32,

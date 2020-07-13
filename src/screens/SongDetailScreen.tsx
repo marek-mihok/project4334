@@ -40,6 +40,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
 
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
+  // TODO: fix iOS vertical align issue
   // TODO: remove empty spaces left when chords and captions are turned off 
   // TODO: add metadata
   // TODO: zobrazit prazdne riadky, napriklad pred samostatnymi akordami bez textu

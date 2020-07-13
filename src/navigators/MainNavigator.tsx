@@ -1,25 +1,22 @@
 import React, {FunctionComponent} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import NewsFeedScreen from '../screens/NewsFeedScreen';
 import SongDetailScreen from '../screens/SongDetailScreen';
-import SongListScreen from '../screens/SongListScreen';
+import BottomTabsNavigator from '../navigators/BottomTabsNavigator';
 
 const Stack = createStackNavigator<MainParamList>();
 
 const MainNavigator: FunctionComponent = () => {
   return (
-    <Stack.Navigator initialRouteName="NewsFeed" headerMode="none">
-      <Stack.Screen name="NewsFeed" component={NewsFeedScreen} />
+    <Stack.Navigator initialRouteName="BottomTabs" headerMode="none">
+      <Stack.Screen name="BottomTabs" component={BottomTabsNavigator} />
       <Stack.Screen name="SongDetail" component={SongDetailScreen} />
-      <Stack.Screen name="SongList" component={SongListScreen} />
     </Stack.Navigator>
   );
 };
 
 export type MainParamList = {
-  NewsFeed: undefined;
+  BottomTabs: undefined;
   SongDetail: {songId: string};
-  SongList: undefined;
 };
 
 export default MainNavigator;
