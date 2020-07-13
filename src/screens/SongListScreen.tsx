@@ -32,6 +32,8 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
     // TODO: Check flat list props
     // TODO: Slovo - nová vášeň - wrong encoding
 
+
+    // if icons not showing, link them with: npx react-native link react-native-vector-icons
     const renderItem = ({item}) => (<List.Item
       title={state.songs[item]?.title?.rendered || '(untitled)'}
       description="Autor · Album"
