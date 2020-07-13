@@ -1,12 +1,14 @@
 import React, {FunctionComponent} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {View, Text, ScrollView, StyleSheet, Button} from 'react-native';
-
-var lot;
+import Spacing from '../components/Spacing';
+import {useAsyncStorage} from '../providers/AsyncStorageProvider';
 
 const NewsFeedScreen: FunctionComponent = ({
   navigation,
 }: StackNavigationProp<>) => {
+  const {state} = useAsyncStorage();
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -22,17 +24,27 @@ const NewsFeedScreen: FunctionComponent = ({
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Posledne pridané piesne</Text>
           <Button
+            title="SONG LIST"
+            onPress={() => {
+              navigation.navigate('SongList');
+            }}
+          />
+          <Spacing size="md" />
+          <Button
             title="Byť blízko"
             onPress={() => {
               navigation.navigate('SongDetail');
             }}
           />
-          {/* <Button
-            title="Flex Wrap TEST"
+          <Spacing size="md" />
+          <Button
+            title="Async state"
             onPress={() => {
-              navigation.navigate('FlexWrapTest');
+              console.log('test');
+              console.log('async Storage:', state);
+              console.log('song count:', Object.keys(state.songs).length);
             }}
-          /> */}
+          />
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Piesne podľa témy</Text>

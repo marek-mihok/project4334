@@ -1,29 +1,46 @@
 import React, {useState, FunctionComponent} from 'react';
 import {View, ScrollView, StyleSheet,  Image, Animated, Platform, } from 'react-native';
 import {Text, Title,} from 'react-native-paper';
+import { Theme } from 'react-native-paper/lib/typescript/src/types';
 import Header from '../components/Header';
 import Spacing from '../components/Spacing';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 import InsetShadow from 'react-native-inset-shadow'
+import { StackNavigationProp } from '@react-navigation/stack';
+import { MainParamList } from '../navigators/MainNavigator';
+import { RouteProp } from '@react-navigation/native';
+import { useAsyncStorage } from '../providers/AsyncStorageProvider';
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
 // TIP: https://medium.com/@rossbulat/theming-in-react-native-explained-ac40d0d2e15c
 
-const songTitle = 'Verný Boh';
+// const songTitle = 'Verný Boh';
 //const chordSheet = `{c: intro: 2x}\r\n\r\n[E][c#][A]\r\n\r\n{c: 1:}\r\n\r\n[E] Priblížiť sa k láske, [c#] ktorá seba [A]dáva\r\n[E] priblížiť sa k láske, [c#] ktorá všetko [A]žiada\r\n\r\n{c: prechorus:}\r\n\r\n[f#] Do [E/G#]svojej [H]prítomnosti [E/G#] zahaľ [A]nás\r\n[f#] a v [E/G#]tôni [H]svojich krídel [E/G#] ukry [A]nás\r\n\r\n{c: chorus:}\r\n\r\nVždy byť [E]blíz[H]ko, [c#][A] po tom [E]tú[H]žim[c#][A]\r\ntvoja [E]lás[H]ka [c#][A] je môj [E][c#]ú[H]kryt\r\n\r\n{c: Interlude}\r\n\r\n{c: 1}\r\n\r\n{c: prechorus}\r\n\r\n{c: chorus 2x}\r\n\r\n{c: interlude 2: 2x}\r\n\r\n[A][c#][A][E][H]\r\n\r\n{c: bridge: 6x}\r\n\r\nEmanu[f#]el, Emanu[c#]el\r\nEmanu[f#]el, Emanu[E][H]el\r\n\r\n{c: woah outro: 2x}\r\n\r\n[f#][c#][f#][E][H]`;
-const chordSheetCrdString = `{c: intro}{c: 1:}\n[h] Nemôžem [D]prestať [G]myslieť na teba [a]\n[h] nemôžem [D] sa ťa stria[G/F]sť\n[h] Si ako [D]oheň v mojom [G]vnútri, čo páli ma\n[h] p[D]áliš ma[G]\n{c: interlude: 2x}\n[e][G][C]\n{c: 1}{c: prechorus:}\n[e] Si [G]všetko, čo [C]chcem\n[e] Si [G]všetko, čo [C]mám\n[e] A aj keď [D]zdá sa, že sp[E][c#][H]íš\nja tvoje meno zavo[C]lám\nproti búrkam, proti tmám\n{c: chorus: 2x}\nSi [G]verný Boh a [D]verný Kráľ\n[e]dokončíš dielo, [C]ktoré si vo mne začal\n[G]Verný Boh a [D]verný Kráľ\n[e]nevzdáš sa snov, ktoré si [C]so mnou snívať začal\n{c: interlude}\n[G][D][e][C]\n{c: bridge: 4x}\n[G][Fmaj7] Ohlásim zo striech\nže [h]ľúbiš mňa a ja ľúbim teba\n[e] Ohlásim zo striech\nže si [C]verný a verný a verný Kráľ\n(si verný a verný Kráľ)\n{c: 1}{c: interlude}{c: 1}{c: prechorus}{c: chorus 2x}{c: interlude}{c: bridge 4x}{c: bridge 2: 4x}\nSi verný [G]Kráľ\nWoa[h]h\nSi verný [e]Kráľ\nWoa[C]h\n{c: outro}`;
+// const chordSheetCrdString = `{c: intro}{c: 1:}\n[h] Nemôžem [D]prestať [G]myslieť na teba [a]\n[h] nemôžem [D] sa ťa stria[G/F]sť\n[h] Si ako [D]oheň v mojom [G]vnútri, čo páli ma\n[h] p[D]áliš ma[G]\n{c: interlude: 2x}\n[e][G][C]\n{c: 1}{c: prechorus:}\n[e] Si [G]všetko, čo [C]chcem\n[e] Si [G]všetko, čo [C]mám\n[e] A aj keď [D]zdá sa, že sp[E][c#][H]íš\nja tvoje meno zavo[C]lám\nproti búrkam, proti tmám\n{c: chorus: 2x}\nSi [G]verný Boh a [D]verný Kráľ\n[e]dokončíš dielo, [C]ktoré si vo mne začal\n[G]Verný Boh a [D]verný Kráľ\n[e]nevzdáš sa snov, ktoré si [C]so mnou snívať začal\n{c: interlude}\n[G][D][e][C]\n{c: bridge: 4x}\n[G][Fmaj7] Ohlásim zo striech\nže [h]ľúbiš mňa a ja ľúbim teba\n[e] Ohlásim zo striech\nže si [C]verný a verný a verný Kráľ\n(si verný a verný Kráľ)\n{c: 1}{c: interlude}{c: 1}{c: prechorus}{c: chorus 2x}{c: interlude}{c: bridge 4x}{c: bridge 2: 4x}\nSi verný [G]Kráľ\nWoa[h]h\nSi verný [e]Kráľ\nWoa[C]h\n{c: outro}`;
 
 type Props = {
-  songId: number;
+  navigation: StackNavigationProp<MainParamList, 'SongDetail'>;
+  route: RouteProp<MainParamList, 'SongDetail'>;
+  theme: Theme;
 }
 
-const SongDetailScreen: FunctionComponent<Props> = ({songId}) => {
+const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
   const [chordsVisible, setChordsVisible] = useState(false);
   const [captionsVisible, setCaptionsVisible] = useState(false);
   const insets = useSafeArea();
+  const {songId} = route.params;
+  const { state } = useAsyncStorage();
+  // console.log('songId:', songId);
+  // console.log('song:', state.songs[songId].chordpro);
+  const songTitle = state.songs[songId].title.rendered;
+  const chordpro = state.songs[songId].chordpro;
+  const chordSheetCrdString = chordpro.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
+  console.log('chordSheetCrdString:',chordSheetCrdString)
+
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
+  // TODO: remove empty spaces left when chords and captions are turned off 
   // TODO: add metadata
   // TODO: zobrazit prazdne riadky, napriklad pred samostatnymi akordami bez textu
   // TODO: spotify support
@@ -33,6 +50,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({songId}) => {
   // TODO: check if highlighted active bottom tabs work properly on all devices
   // TODO: finish transposition: transpo indicator, transpo clear
   // TODO: QR Code playlist share
+  // TODO: Double tap for showing chords
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
 
   // animation for bottom tabs
@@ -284,7 +302,7 @@ const chordLyricsStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  captionWrapper: {alignItems: 'center', paddingVertical: 12},
+  captionWrapper: {alignItems: 'center', paddingVertical: 12, },
   caption: {
     color: '#bbb',
     textTransform: 'uppercase',

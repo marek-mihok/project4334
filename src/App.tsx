@@ -10,28 +10,26 @@
 
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-
-import NewsFeedScreen from './screens/NewsFeedScreen';
-import SongDetailScreen from './screens/SongDetailScreen';
-import FlexWrapTest from './screens/FlexWrapTest';
 import {Provider as PaperProvider} from 'react-native-paper';
 import theme from './theme';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-
-const Stack = createStackNavigator();
+import AsyncStorageProvider from './providers/AsyncStorageProvider';
+import RestApiDataProvider from './providers/RestApiDataProvider';
+import MainNavigator from './navigators/MainNavigator';
+import BottomTabsNavigator from './navigators/BottomTabsNavigator';
 
 const App = () => {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="NewsFeed" headerMode="none">
-            <Stack.Screen name="NewsFeed" component={NewsFeedScreen} />
-            <Stack.Screen name="SongDetail" component={SongDetailScreen} />
-            <Stack.Screen name="FlexWrapTest" component={FlexWrapTest} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <AsyncStorageProvider>
+          <RestApiDataProvider>
+            <NavigationContainer>
+              <MainNavigator />
+              {/* <BottomTabsNavigator /> */}
+            </NavigationContainer>
+          </RestApiDataProvider>
+        </AsyncStorageProvider>
       </SafeAreaProvider>
     </PaperProvider>
   );

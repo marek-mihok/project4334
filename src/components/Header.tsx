@@ -1,13 +1,6 @@
 import React, {FunctionComponent} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {
-  StyleSheet,
-  View,
-  Platform,
-  // SafeAreaView,
-  // StatusBar,
-  // Platform,
-} from 'react-native';
+import {StyleSheet, View, Platform} from 'react-native';
 import {Appbar, Text} from 'react-native-paper';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,8 +17,6 @@ const Header: FunctionComponent<Props> = ({title, children, icon}) => {
     navigation.goBack();
   };
 
-  // TODO: change back button icon for iOS platform
-
   return (
     <View
       style={{
@@ -35,10 +26,7 @@ const Header: FunctionComponent<Props> = ({title, children, icon}) => {
         top: 0,
         left: 0,
         right: 0,
-        // top: 0,
         overflow: 'hidden',
-        // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        // backgroundColor: 'blue',
       }}>
       <View style={styles.header}>
         <View style={styles.backButtonWrapper}>
