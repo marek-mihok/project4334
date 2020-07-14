@@ -239,7 +239,7 @@ return(
   return (
     <SafeAreaView style={{paddingTop: insets.top, paddingBottom: 0, flex: 1, backgroundColor: '#fff'}}>
     <Animated.View style={{transform:[{translateY: headerTranslateY}, ], elevation: 4, zIndex: 100,}}>
-      <Header title={songTitle} />
+      <Header title={songTitle} dark={true} />
     </Animated.View>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"

@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tab = createBottomTabNavigator();
 
-// TODO: change height of bottom tab navigator
+// TODO: change height of bottom tab navigator, add bottom padding
 
 const BottomTabsNavigator: FunctionComponent = () => {
   return (
@@ -24,6 +24,7 @@ const BottomTabsNavigator: FunctionComponent = () => {
         component={NewsFeedScreen}
         options={{
           tabBarLabel: 'Domov',
+          title: '4334',
           tabBarIcon: ({color, size}) => (
             <Icon name="home" color={color} size={size} />
           ),
@@ -34,6 +35,7 @@ const BottomTabsNavigator: FunctionComponent = () => {
         component={SongListScreen}
         options={{
           tabBarLabel: 'Piesne',
+          title: 'Piesne',
           tabBarIcon: ({color, size}) => (
             <Icon name="music" color={color} size={size} />
           ),
