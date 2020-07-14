@@ -52,6 +52,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
   // TODO: finish transposition: transpo indicator, transpo clear
   // TODO: QR Code playlist share
   // TODO: Double tap for showing chords
+  // TODO: Tap to hide/show header and bottom control panel
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
 
   // animation for bottom tabs
@@ -127,10 +128,10 @@ const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
 
   const chordSheetRows = chordSheetCrdString.split('\n'); // TODO: what if there is \n\n
 
-  const chordSheet = chordSheetRows.map((row, rowIdx) => {
+  const chordSheet = chordSheetRows.map((row) => {
     let captions = row.match(/{[^{}]+}/g);
     if (captions) {
-      let captionsParsed = captions.map((caption, captionIdx) => {
+      let captionsParsed = captions.map((caption: string, captionIdx: string) => {
         if (caption.startsWith('{column_break')) {
           // TODO: replace startsWith
           return (
