@@ -6,12 +6,14 @@ type StorageState = {
   songs: {[id: string]: string};
   albums: {[id: string]: string};
   artists: {[id: string]: string};
+  lastFetched: string;
 };
 
 const LOAD_STATE = 'LOAD_STATE';
 export const SET_SONG = 'SET_SONG';
 export const SET_ALBUM = 'SET_ALBUM';
 export const SET_ARTIST = 'SET_ARTIST';
+export const SET_LAST_FETCHED = 'SET_LAST_FETCHED';
 
 type ActionType =
   | {
@@ -38,6 +40,12 @@ type ActionType =
         artistId: string;
         artist: string;
       };
+    }
+  | {
+      type: typeof SET_LAST_FETCHED;
+      payload: {
+        time: string;
+      };
     };
 
 const reducer = (state: StorageState, action: ActionType) => {
@@ -58,6 +66,10 @@ const reducer = (state: StorageState, action: ActionType) => {
     case SET_ARTIST:
       return produce(state, draftState => {
         draftState.artists[action.payload.artistId] = action.payload.artist;
+      });
+    case SET_LAST_FETCHED:
+      return produce(state, draftState => {
+        draftState.lastFetched = action.payload.time;
       });
     default:
       return state;
@@ -85,6 +97,7 @@ const initialState = {
   songs: {},
   albums: {},
   artists: {},
+  lastFetched: '2014-01-01T00:00:00.000Z',
 };
 
 const AsyncStorageProvider: FunctionComponent = ({children}) => {

@@ -66,7 +66,7 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
         contentContainerStyle={{paddingHorizontal: 16}}
         ListEmptyComponent={<View style={{paddingTop: 12}}><Text>Nenašli sme žiadnu pieseň zodpovedajúcu hľadanému výrazu.</Text></View>}
         style={styles.scrollView}
-        data={searchQuery.length > 0 ? searchFilter(searchQuery) : Object.keys(state.songs)} renderItem={renderItem} keyExtractor={item => state.songs[item]?.id} initialNumToRender={24} ><Text>Test</Text></FlatList>)}
+        data={searchQuery.length > 0 ? searchFilter(searchQuery) : Object.keys(state.songs)} renderItem={renderItem} keyExtractor={(item, index) => 'list-item-' + index} initialNumToRender={24} ><Text>Test</Text></FlatList>)}
 
     </SafeAreaView>
   );

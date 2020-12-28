@@ -35,9 +35,16 @@ const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
   // console.log('song:', state.songs[songId].chordpro);
   const songTitle = state.songs[songId].title.rendered;
   const chordpro = state.songs[songId].chordpro;
+  const metaKey = state.songs[songId].key;
+  const metaCapo = state.songs[songId].capo;
+  const metaTempo = state.songs[songId].tempo;
+  const metaBibleRef = state.songs[songId].bible_ref;
+  const metaTextAuthor = state.songs[songId].text;
+  const metaSpotifyUrl = state.songs[songId].spotify;
+  const metaYoutubeUrl = state.songs[songId].video;
   const chordSheetCrdString = chordpro.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
-  console.log('chordSheetCrdString:',chordSheetCrdString)
-
+  console.log('chordSheetCrdString:',chordSheetCrdString);
+console.log('song state:', state.songs[songId]);
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
   // TODO: fix iOS vertical align issue
@@ -53,6 +60,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
   // TODO: QR Code playlist share
   // TODO: Double tap for showing chords
   // TODO: Tap to hide/show header and bottom control panel
+  // TODO: Optimize performance by not re-computing the song component when showing/hiding chords/captions, but base it just on child component's visibility
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
 
   // animation for bottom tabs

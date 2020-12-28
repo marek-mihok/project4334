@@ -1,13 +1,16 @@
-import React, {FunctionComponent} from 'react';
+import React from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {View, Text, ScrollView, StyleSheet, Button} from 'react-native';
 import Spacing from '../components/Spacing';
 import {useAsyncStorage} from '../providers/AsyncStorageProvider';
 import Header from '../components/Header';
+import {MainParamList} from '../navigators/MainNavigator';
 
-const NewsFeedScreen: FunctionComponent = ({
-  navigation,
-}: StackNavigationProp<>) => {
+type Props = {
+  navigation: StackNavigationProp<MainParamList, 'NewsFeed'>;
+};
+
+const NewsFeedScreen: React.FC<Props> = ({navigation}) => {
   const {state} = useAsyncStorage();
 
   return (

@@ -6,8 +6,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tab = createBottomTabNavigator();
 
-// TODO: change height of bottom tab navigator, add bottom padding
-
 const BottomTabsNavigator: FunctionComponent = () => {
   return (
     <Tab.Navigator
@@ -17,7 +15,6 @@ const BottomTabsNavigator: FunctionComponent = () => {
         activeTintColor: '#44d480',
         tabStyle: {},
         labelStyle: {},
-        style: {paddingTop: 5, paddingBottom: 5},
       }}>
       <Tab.Screen
         name="NewsFeed"

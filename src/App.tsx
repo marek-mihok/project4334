@@ -20,15 +20,15 @@ import MainNavigator from './navigators/MainNavigator';
 const App = () => {
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <AsyncStorageProvider>
-          <RestApiDataProvider>
+      <AsyncStorageProvider>
+        <RestApiDataProvider>
+          <SafeAreaProvider>
             <NavigationContainer>
               <MainNavigator />
             </NavigationContainer>
-          </RestApiDataProvider>
-        </AsyncStorageProvider>
-      </SafeAreaProvider>
+          </SafeAreaProvider>
+        </RestApiDataProvider>
+      </AsyncStorageProvider>
     </PaperProvider>
   );
 };

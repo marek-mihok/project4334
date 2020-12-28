@@ -2,7 +2,7 @@
 
 import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {useAsyncStorage, SET_SONG, SET_ALBUM} from './AsyncStorageProvider';
+import {useAsyncStorage, SET_SONG, SET_ALBUM, SET_LAST_FETCHED} from './AsyncStorageProvider';
 
 export const MAX_ATTEMPTS_COUNT = 'MAX_ATTEMPTS_COUNT';
 
@@ -36,7 +36,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
   }, [isInternetReachable]);
 
   const fetchSongData = async () => {
-    console.log('Fetching song data from WP REST API...')
+    console.log('Fetching song data from WP REST API from', state.lastFetched);
     let allData: any[] = [];
     let morePagesAvailable = true;
     let currentPage = 0;
@@ -49,7 +49,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     while (morePagesAvailable) {
       currentPage++;
       const response = await fetch(
-        `https://4334.sk/wp-json/wp/v2/song?per_page=100&order=asc&orderby=date&page=${currentPage}`,
+        `https://4334.sk/wp-json/wp/v2/song?per_page=100&order=desc&orderby=date&after=${state.lastFetched}&page=${currentPage}`,
         );
         let data = await response.json();
         let total_pages = response.headers?.map['x-wp-totalpages']; // TODO: Handle if undefined
@@ -62,9 +62,9 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
           dispatch({ type: SET_SONG, payload: { songId: item.id, song: item } });
         }
       });
-      // console.log('time:',new Date().toISOString());
+      dispatch({type: SET_LAST_FETCHED, payload: {time: new Date().toISOString()}})
     setLoading(false);
-    console.log('Song data are fetched.')
+    console.log('Song data are fetched. Date:', state.lastFetched);
     return allData;
   };
 
@@ -105,7 +105,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     if(isInternetReachable){
       console.log('Connected to internet.');
       fetchSongData();
-      fetchAlbumData();
+      // fetchAlbumData();
     }
   }, []);
 
