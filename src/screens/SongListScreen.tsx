@@ -8,6 +8,7 @@ import { Theme } from 'react-native-paper/lib/typescript/src/types';
 import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
 import Header from '../components/Header';
 import { useAsyncStorage } from '../providers/AsyncStorageProvider';
+import { useSongs } from '../providers/SongProvider';
 
 type Props = {
   navigation: StackNavigationProp<MainParamList, 'BottomTabs'>;
@@ -19,6 +20,8 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
   
   const insets = useSafeArea();
   const { state } = useAsyncStorage();
+  const {songs} = useSongs();
+  console.log('songs', songs);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -32,16 +35,16 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
 
     // if icons not showing, link them with: npx react-native link react-native-vector-icons
     const renderItem = ({item}) => (<List.Item
-      title={state.songs[item]?.title?.rendered || '(untitled)'}
+      title={songs[item]?.title || '(untitled)'}
       description="Autor · Album"
       left={props => <List.Icon {...props} icon="music" /* TODO: add songId to navigation */ />}
-      onPress={() => {navigation.navigate('SongDetail', {songId: state.songs[item]?.id});}}
+      onPress={() => {navigation.navigate('SongDetail', {songId: songs[item]?.id});}}
     />);
 
     const searchFilter = (searchInput: string) => {
       const searchText = searchInput.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
       const filteredSongs = Object.keys(state.songs).filter((item) => {
-          return state.songs[item]?.title?.rendered.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().match(searchText);
+          return songs[item]?.title?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().match(searchText);
       })
       return filteredSongs;
     }
@@ -62,11 +65,11 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
           <Searchbar placeholder="Hľadať pieseň" style={{height: 54, margin: 0}} value={searchQuery}
       onChangeText={(query: string) => {setSearchQuery(query)}} selectionColor={'#44d480'} />
         </View>
-     {state.songs && (<FlatList contentInsetAdjustmentBehavior="automatic"
+     {songs && (<FlatList contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{paddingHorizontal: 16}}
         ListEmptyComponent={<View style={{paddingTop: 12}}><Text>Nenašli sme žiadnu pieseň zodpovedajúcu hľadanému výrazu.</Text></View>}
         style={styles.scrollView}
-        data={searchQuery.length > 0 ? searchFilter(searchQuery) : Object.keys(state.songs)} renderItem={renderItem} keyExtractor={(item, index) => 'list-item-' + index} initialNumToRender={24} ><Text>Test</Text></FlatList>)}
+        data={searchQuery.length > 0 ? searchFilter(searchQuery) : Object.keys(songs)} renderItem={renderItem} keyExtractor={(item, index) => 'list-item-' + index} initialNumToRender={24} ><Text>Test</Text></FlatList>)}
 
     </SafeAreaView>
   );

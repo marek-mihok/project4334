@@ -16,18 +16,21 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AsyncStorageProvider from './providers/AsyncStorageProvider';
 import RestApiDataProvider from './providers/RestApiDataProvider';
 import MainNavigator from './navigators/MainNavigator';
+import {SongsProvider} from './providers/SongProvider';
 
 const App = () => {
   return (
     <PaperProvider theme={theme}>
       <AsyncStorageProvider>
-        <RestApiDataProvider>
-          <SafeAreaProvider>
-            <NavigationContainer>
-              <MainNavigator />
-            </NavigationContainer>
-          </SafeAreaProvider>
-        </RestApiDataProvider>
+        <SongsProvider>
+          <RestApiDataProvider>
+            <SafeAreaProvider>
+              <NavigationContainer>
+                <MainNavigator />
+              </NavigationContainer>
+            </SafeAreaProvider>
+          </RestApiDataProvider>
+        </SongsProvider>
       </AsyncStorageProvider>
     </PaperProvider>
   );

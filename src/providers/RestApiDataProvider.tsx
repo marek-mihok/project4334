@@ -3,6 +3,7 @@
 import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {useAsyncStorage, SET_SONG, SET_ALBUM, SET_LAST_FETCHED} from './AsyncStorageProvider';
+import { useSongs } from './SongProvider';
 
 export const MAX_ATTEMPTS_COUNT = 'MAX_ATTEMPTS_COUNT';
 
@@ -30,6 +31,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
   const isInternetReachable = Boolean(useNetInfo());
   const isInternetReachableRef = useRef<boolean | null>();
   const {dispatch, state} = useAsyncStorage();
+  const {createSong} = useSongs();
 
   useEffect(() => {
     isInternetReachableRef.current = isInternetReachable;
@@ -57,10 +59,12 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
         morePagesAvailable = currentPage < total_pages - 0; // TODO: remove -2
       }
       allData.forEach((item) => {
-        if(state.songs[item.id] === undefined){
-          console.log('Adding song item to async storage:',item.id, item);
-          dispatch({ type: SET_SONG, payload: { songId: item.id, song: item } });
-        }
+        // if(state.songs[item.id] === undefined){
+        //   console.log('Adding song item to async storage:',item.id, item);
+        //   dispatch({ type: SET_SONG, payload: { songId: item.id, song: item } });
+        // }
+        // addSong(item);
+        createSong({...item, title: item.title.rendered, albumId: item.album});
       });
       dispatch({type: SET_LAST_FETCHED, payload: {time: new Date().toISOString()}})
     setLoading(false);

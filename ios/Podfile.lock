@@ -224,7 +224,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RealmJS (10.0.1):
+  - RealmJS (10.2.0):
     - GCDWebServer
     - React
   - RNCAsyncStorage (1.11.0):
@@ -394,7 +394,7 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RealmJS: 5c2e37124c889c405c92b76f0d83bce07ca228f8
+  RealmJS: 5195064e9aeccf94ae3756bd9d0f2301b9074b07
   RNCAsyncStorage: d059c3ee71738c39834a627476322a5a8cd5bf36
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
@@ -407,4 +407,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: b4835e69674d24d3eccd07698691cd3bf29345e5
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1
