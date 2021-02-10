@@ -1,7 +1,4 @@
-import {ObjectId} from 'bson';
-
 export type Song = {
-  // _id: ObjectId;
   id: number;
   date: string;
   date_gmt: string;
@@ -23,10 +20,9 @@ export type Song = {
   video: string;
 };
 
-export const SongSchema = {
+export const SongSchema: Realm.ObjectSchema = {
   name: 'Song',
   properties: {
-    // _id: 'objectId',
     id: 'int',
     date: 'string',
     date_gmt: 'string',

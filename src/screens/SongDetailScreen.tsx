@@ -10,7 +10,7 @@ import InsetShadow from 'react-native-inset-shadow'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MainParamList } from '../navigators/MainNavigator';
 import { RouteProp } from '@react-navigation/native';
-import { useAsyncStorage } from '../providers/AsyncStorageProvider';
+import { useSongs } from '../providers/SongProvider';
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
 // TIP: https://medium.com/@rossbulat/theming-in-react-native-explained-ac40d0d2e15c
@@ -30,21 +30,21 @@ const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
   const [captionsVisible, setCaptionsVisible] = useState(false);
   const insets = useSafeArea();
   const {songId} = route.params;
-  const { state } = useAsyncStorage();
+  const {songs} = useSongs();
   // console.log('songId:', songId);
-  // console.log('song:', state.songs[songId].chordpro);
-  const songTitle = state.songs[songId].title.rendered;
-  const chordpro = state.songs[songId].chordpro;
-  const metaKey = state.songs[songId].key;
-  const metaCapo = state.songs[songId].capo;
-  const metaTempo = state.songs[songId].tempo;
-  const metaBibleRef = state.songs[songId].bible_ref;
-  const metaTextAuthor = state.songs[songId].text;
-  const metaSpotifyUrl = state.songs[songId].spotify;
-  const metaYoutubeUrl = state.songs[songId].video;
+  // console.log('song:', songs[songId].chordpro);
+  const songTitle = songs[songId].title;
+  const chordpro = songs[songId].chordpro;
+  const metaKey = songs[songId].key;
+  const metaCapo = songs[songId].capo;
+  const metaTempo = songs[songId].tempo;
+  const metaBibleRef = songs[songId].bible_ref;
+  const metaTextAuthor = songs[songId].text;
+  const metaSpotifyUrl = songs[songId].spotify;
+  const metaYoutubeUrl = songs[songId].video;
   const chordSheetCrdString = chordpro.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
   console.log('chordSheetCrdString:',chordSheetCrdString);
-console.log('song state:', state.songs[songId]);
+console.log('song state:', songs[songId]);
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
   // TODO: fix iOS vertical align issue

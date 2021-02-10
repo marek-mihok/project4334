@@ -1,7 +1,4 @@
-import {ObjectId} from 'bson';
-
 export type Album = {
-  _id: ObjectId;
   id: number;
   date: string;
   date_gmt: string;
@@ -14,10 +11,9 @@ export type Album = {
   _links: string; // {'wp:attachment': {href: 'string'}}, // TODO: odtial stiahnut guid: {rendered: 'string}
 };
 
-export const AlbumSchema = {
+export const AlbumSchema: Realm.ObjectSchema = {
   name: 'Album',
   properties: {
-    _id: 'objectId',
     id: 'int',
     date: 'string',
     date_gmt: 'string',
@@ -29,5 +25,5 @@ export const AlbumSchema = {
     artistId: 'string', //artist
     _links: 'string', // {'wp:attachment': {href: 'string'}}, // TODO: odtial stiahnut guid: {rendered: 'string}
   },
-  primaryKey: '_id',
+  primaryKey: 'id',
 };

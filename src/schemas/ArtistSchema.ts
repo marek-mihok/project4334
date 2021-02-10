@@ -1,7 +1,4 @@
-import {ObjectId} from 'bson';
-
 export type Artist = {
-  _id: ObjectId;
   id: number;
   date: string;
   date_gmt: string;
@@ -13,10 +10,9 @@ export type Artist = {
   content: string; // {rendered: 'string'},
 };
 
-export const ArtistSchema = {
+export const ArtistSchema: Realm.ObjectSchema = {
   name: 'Artist',
   properties: {
-    _id: 'objectId',
     id: 'int',
     date: 'string',
     date_gmt: 'string',
@@ -27,5 +23,5 @@ export const ArtistSchema = {
     featured_media: 'int',
     content: 'string', // {rendered: 'string'},
   },
-  primaryKey: '_id',
+  primaryKey: 'id',
 };

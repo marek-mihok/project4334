@@ -21,7 +21,7 @@ const SongListScreen: FunctionComponent<Props> = ({navigation, route, theme}) =>
   const insets = useSafeArea();
   const { state } = useAsyncStorage();
   const {songs} = useSongs();
-  console.log('songs', songs);
+  // console.log('songs', songs);
 
   const [searchQuery, setSearchQuery] = useState('');
 
