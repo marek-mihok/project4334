@@ -9,7 +9,7 @@ const Tab = createBottomTabNavigator();
 const BottomTabsNavigator: FunctionComponent = () => {
   return (
     <Tab.Navigator
-      initialRouteName={'Domov'}
+      initialRouteName={'SongList'}
       lazy={false}
       tabBarOptions={{
         activeTintColor: '#44d480',

@@ -10,7 +10,6 @@ import InsetShadow from 'react-native-inset-shadow'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MainParamList } from '../navigators/MainNavigator';
 import { RouteProp } from '@react-navigation/native';
-import { useSongs } from '../providers/SongProvider';
 import { useAsyncStorage } from '../providers/AsyncStorageProvider';
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
@@ -36,7 +35,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const {songId} = route.params;
   const {state} = useAsyncStorage();
   const songs = state.songs;
-  // const song = songs.find((s) => {return s.id === songId});
   const song = songs[songId];
   if(song === undefined){
     navigation.goBack();

@@ -7,7 +7,6 @@ import {Text, List, Searchbar, ProgressBar} from 'react-native-paper';
 import {Theme} from 'react-native-paper/lib/typescript/src/types';
 import {SafeAreaView, useSafeArea} from 'react-native-safe-area-context';
 import Header from '../components/Header';
-import {useSongs} from '../providers/SongProvider';
 import {useRestApi} from '../providers/RestApiDataProvider';
 import { useAsyncStorage } from '../providers/AsyncStorageProvider';
 
@@ -21,7 +20,6 @@ const SongListScreen: React.FC<Props> = ({navigation, route, theme}) => {
   console.log('SongListScreen re-rendered.');
 
   const insets = useSafeArea();
-  // const {songs} = useSongs();
   const {state} = useAsyncStorage();
   const songs = state.songs;
   const {loading, progress} = useRestApi();

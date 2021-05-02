@@ -2,14 +2,12 @@
 
 import React, {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {useAsyncStorage, SET_SONGS, SET_ALBUMS, SET_LAST_FETCHED, LOAD_STATE} from './AsyncStorageProvider';
-import { useSongs } from './SongProvider';
+import {useAsyncStorage, SET_SONGS, SET_ALBUMS, SET_LAST_FETCHED} from './AsyncStorageProvider';
 
 export const MAX_ATTEMPTS_COUNT = 'MAX_ATTEMPTS_COUNT';
 
 type RestApiDataContext = {
   loading: boolean;
-  fetchSongData: () => Promise<any[]>;
   progress: number;
 };
 
@@ -137,9 +135,8 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     }
   }, []);
 
-  const value = {
+  const value: RestApiDataContext = {
     loading,
-    fetchSongData,
     progress,
   };
 
