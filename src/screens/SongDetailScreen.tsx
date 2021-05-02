@@ -11,6 +11,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { MainParamList } from '../navigators/MainNavigator';
 import { RouteProp } from '@react-navigation/native';
 import { useSongs } from '../providers/SongProvider';
+import { useAsyncStorage } from '../providers/AsyncStorageProvider';
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
 // TIP: https://medium.com/@rossbulat/theming-in-react-native-explained-ac40d0d2e15c
@@ -25,26 +26,34 @@ type Props = {
   theme: Theme;
 }
 
-const SongDetailScreen: FunctionComponent<Props> = ({route}) => {
+const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
+
+  console.log('SongDetailScreen re-rendered.');
+
   const [chordsVisible, setChordsVisible] = useState(false);
   const [captionsVisible, setCaptionsVisible] = useState(false);
   const insets = useSafeArea();
   const {songId} = route.params;
-  const {songs} = useSongs();
-  // console.log('songId:', songId);
+  const {state} = useAsyncStorage();
+  const songs = state.songs;
+  // const song = songs.find((s) => {return s.id === songId});
+  const song = songs[songId];
+  if(song === undefined){
+    navigation.goBack();
+  }
+  console.log('song:', song);
   // console.log('song:', songs[songId].chordpro);
-  const songTitle = songs[songId].title;
-  const chordpro = songs[songId].chordpro;
-  const metaKey = songs[songId].key;
-  const metaCapo = songs[songId].capo;
-  const metaTempo = songs[songId].tempo;
-  const metaBibleRef = songs[songId].bible_ref;
-  const metaTextAuthor = songs[songId].text;
-  const metaSpotifyUrl = songs[songId].spotify;
-  const metaYoutubeUrl = songs[songId].video;
-  const chordSheetCrdString = chordpro.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
+  const songTitle = song?.title;
+  const chordpro = song?.chordpro;
+  const metaKey = song?.key;
+  const metaCapo = song?.capo;
+  const metaTempo = song?.tempo;
+  const metaBibleRef = song?.bible_ref;
+  const metaTextAuthor = song?.text;
+  const metaSpotifyUrl = song?.spotify;
+  const metaYoutubeUrl = song?.video;
+  const chordSheetCrdString = chordpro?.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
   console.log('chordSheetCrdString:',chordSheetCrdString);
-console.log('song state:', songs[songId]);
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
   // TODO: fix iOS vertical align issue

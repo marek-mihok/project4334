@@ -16,7 +16,7 @@ const MainNavigator: FunctionComponent = () => {
 
 export type MainParamList = {
   BottomTabs: undefined;
-  SongDetail: {songId: string};
+  SongDetail: {songId: number};
   NewsFeed: undefined;
 };
 

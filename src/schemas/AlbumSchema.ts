@@ -7,8 +7,8 @@ export type Album = {
   link: string;
   title: string; // {rendered: 'string'},
   featured_media: number;
-  artistId: string; //artist
-  _links: string; // {'wp:attachment': {href: 'string'}}, // TODO: odtial stiahnut guid: {rendered: 'string}
+  artistId: number; //artist
+  imageInfoUrl: string; // {'wp:attachment': {href: 'string'}}, // TODO: odtial stiahnut media_details
 };
 
 export const AlbumSchema: Realm.ObjectSchema = {
@@ -22,8 +22,8 @@ export const AlbumSchema: Realm.ObjectSchema = {
     link: 'string',
     title: 'string', // {rendered: 'string'},
     featured_media: 'int',
-    artistId: 'string', //artist
-    _links: 'string', // {'wp:attachment': {href: 'string'}}, // TODO: odtial stiahnut guid: {rendered: 'string}
+    artistId: 'int', //artist
+    imageInfoUrl: 'string', // {'wp:attachment': {href: 'string'}}, // TODO: odtial stiahnut guid: {rendered: 'string}
   },
   primaryKey: 'id',
 };

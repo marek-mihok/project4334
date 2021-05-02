@@ -1,18 +1,17 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import produce from 'immer';
 import React, {FunctionComponent, useEffect, useState} from 'react';
 
 type StorageState = {
-  songs: {[id: string]: string};
-  albums: {[id: string]: string};
-  artists: {[id: string]: string};
-  lastFetched: string;
+  songs: {[songId: string]: string};
+  albums: {[albumId: string]: string};
+  artists: {[artistId: string]: string};
+  lastFetched: {time: string};
 };
 
 const LOAD_STATE = 'LOAD_STATE';
-export const SET_SONG = 'SET_SONG';
-export const SET_ALBUM = 'SET_ALBUM';
-export const SET_ARTIST = 'SET_ARTIST';
+export const SET_SONGS = 'SET_SONGS';
+export const SET_ALBUMS = 'SET_ALBUMS';
+export const SET_ARTISTS = 'SET_ARTISTS';
 export const SET_LAST_FETCHED = 'SET_LAST_FETCHED';
 
 type ActionType =
@@ -21,25 +20,16 @@ type ActionType =
       payload: StorageState;
     }
   | {
-      type: typeof SET_SONG;
-      payload: {
-        songId: string;
-        song: string;
-      };
+      type: typeof SET_SONGS;
+      payload: {[songId: string]: string};
     }
   | {
-      type: typeof SET_ALBUM;
-      payload: {
-        albumId: string;
-        album: string;
-      };
+      type: typeof SET_ALBUMS;
+      payload: {[albumId: string]: string};
     }
   | {
-      type: typeof SET_ARTIST;
-      payload: {
-        artistId: string;
-        artist: string;
-      };
+      type: typeof SET_ARTISTS;
+      payload: {[artistId: string]: string};
     }
   | {
       type: typeof SET_LAST_FETCHED;
@@ -55,22 +45,14 @@ const reducer = (state: StorageState, action: ActionType) => {
         ...state,
         ...action.payload,
       };
-    case SET_SONG:
-      return produce(state, draftState => {
-        draftState.songs[action.payload.songId] = action.payload.song;
-      });
-    case SET_ALBUM:
-      return produce(state, draftState => {
-        draftState.albums[action.payload.albumId] = action.payload.album;
-      });
-    case SET_ARTIST:
-      return produce(state, draftState => {
-        draftState.artists[action.payload.artistId] = action.payload.artist;
-      });
+    case SET_SONGS:
+      return {...state, songs: action.payload};
+    case SET_ALBUMS:
+      return {...state, albums: action.payload};
+    case SET_ARTISTS:
+      return {...state, artists: action.payload};
     case SET_LAST_FETCHED:
-      return produce(state, draftState => {
-        draftState.lastFetched = action.payload.time;
-      });
+      return {...state, lastFetched: action.payload};
     default:
       return state;
   }
@@ -93,11 +75,11 @@ export const useAsyncStorage = () => {
   return context;
 };
 
-const initialState = {
+const initialState: StorageState = {
   songs: {},
   albums: {},
   artists: {},
-  lastFetched: '2014-01-01T00:00:00.000Z',
+  lastFetched: {time: '2014-01-01T00:00:00.000Z'},
 };
 
 const AsyncStorageProvider: FunctionComponent = ({children}) => {
