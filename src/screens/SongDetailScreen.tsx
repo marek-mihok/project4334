@@ -1,4 +1,4 @@
-import React, {useState, FunctionComponent} from 'react';
+import React, {useState, FunctionComponent, useEffect} from 'react';
 import {View, ScrollView, StyleSheet,  Image, Animated, Platform, } from 'react-native';
 import {Text, Title,} from 'react-native-paper';
 import { Theme } from 'react-native-paper/lib/typescript/src/types';
@@ -34,12 +34,24 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const insets = useSafeArea();
   const {songId} = route.params;
   const {state} = useAsyncStorage();
-  const songs = state.songs;
+  const {songs, albums, artists} = state;
+
+  
+
   const song = songs[songId];
+  console.log('song:', song);
+  const album = albums[song.album];
+  console.log('album:', album);
+  const artist = artists[album.artist];
+  console.log('artist:', artist);
+
   if(song === undefined){
     navigation.goBack();
   }
-  console.log('song:', song);
+
+
+
+
   // console.log('song:', songs[songId].chordpro);
   const songTitle = song?.title;
   const chordpro = song?.chordpro;
@@ -60,7 +72,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   // TODO: zobrazit prazdne riadky, napriklad pred samostatnymi akordami bez textu
   // TODO: spotify support
   // TODO: disable scroll animations when text does not overflow screen
-  // TODO: REST download
   // TODO: horizontal line under multiple chords
   // TODO: check if highlighted active bottom tabs work properly on all devices
   // TODO: finish transposition: transpo indicator, transpo clear
@@ -212,7 +223,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
     let chord = row.match(/(\[[^\[\]]*\])/g);
     let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
 return(
-    <View style={chordLyricsStyles.chordsLyricsWrapper}>
+    <View key={`key-${lyrics?.[0]}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
     { chord && <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
@@ -222,7 +233,7 @@ return(
     </View>  }
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={[chordLyricsStyles.lyrics, {minHeight: textSizes[0] + 8}]}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}>{ lyrics[0] || ''}</Text>
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0], height: 8 + textSizes[0]}]}>{ lyrics[0] || ''}</Text>
       </View>
     </View>
   </View>)

@@ -22,8 +22,14 @@ const SongListScreen: React.FC<Props> = ({navigation, route, theme}) => {
   const insets = useSafeArea();
   const {state} = useAsyncStorage();
   const songs = state.songs;
+  const [progressPercentage, setProgressPercentage] = useState(0);
   const {loading, progress} = useRestApi();
   console.log('progress:', progress);
+
+  useEffect(() => {
+    console.log('setting progress percentage to:', progress);
+    setProgressPercentage(progress);
+  }, [progress]);
 
   
 //   const [saved, setSaved] = useState(savedCount);
@@ -83,8 +89,7 @@ const SongListScreen: React.FC<Props> = ({navigation, route, theme}) => {
           }}
           selectionColor={'#44d480'}
         />
-      </View>
-      
+      </View>      
       {!loading && songs ? (
         <FlatList
           contentInsetAdjustmentBehavior="automatic"
@@ -109,8 +114,8 @@ const SongListScreen: React.FC<Props> = ({navigation, route, theme}) => {
         </FlatList>
       ) : (
         <>
-        <Text>Downloading {progress}</Text>
-        {/* <ProgressBar progress={progress} color={'green'} /> */}
+        <Text>Downloading {progressPercentage}</Text>
+        <ProgressBar progress={progressPercentage} color={'green'} />
         </>
       )}
     </SafeAreaView>
