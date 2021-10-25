@@ -52,6 +52,8 @@ const SongListScreen: React.FC<Props> = ({navigation, route, theme}) => {
   const renderItem = ({item}) => (<List.Item
     title={songs[item]?.title || '(untitled)'}
     description="Autor · Album"
+    titleStyle={{fontWeight: '600'}}
+    descriptionStyle={{fontWeight: '600'}}
     left={props => <List.Icon {...props} icon="music" /* TODO: add songId to navigation */ />}
     onPress={() => {
       navigation.navigate('SongDetail', {songId: songs[item]?.id});
@@ -83,6 +85,7 @@ const SongListScreen: React.FC<Props> = ({navigation, route, theme}) => {
         <Searchbar
           placeholder="Hľadať pieseň"
           style={{height: 54, margin: 0}}
+          inputStyle={{fontWeight: '600'}}
           value={searchQuery}
           onChangeText={(query: string) => {
             setSearchQuery(query);

@@ -72,7 +72,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
         songs[item.id] = {...item, title: item.title.rendered};
         let sCount = ++ idx;
         console.log('saved songs count:', sCount, totalCount.current);
-        setProgress(((sCount*100)/totalCount.current)/100);
+        // setProgress(((sCount*100)/totalCount.current)/100);
       });
       dispatch({ type: SET_SONGS, payload: songs });
       dispatch({type: SET_LAST_FETCHED, payload: {time: new Date().toISOString()}})

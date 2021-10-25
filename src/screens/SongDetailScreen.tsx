@@ -60,8 +60,12 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const metaTempo = song?.tempo;
   const metaBibleRef = song?.bible_ref;
   const metaTextAuthor = song?.text;
+  const metaOriginal = song?.original;
+  const metaTranslation = song?.translation;
   const metaSpotifyUrl = song?.spotify;
   const metaYoutubeUrl = song?.video;
+  const albumTitle = album?.title;
+  const artistTitle = artist?.title;
   const chordSheetCrdString = chordpro?.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
   console.log('chordSheetCrdString:',chordSheetCrdString);
 
@@ -79,6 +83,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   // TODO: Double tap for showing chords
   // TODO: Tap to hide/show header and bottom control panel
   // TODO: Optimize performance by not re-computing the song component when showing/hiding chords/captions, but base it just on child component's visibility
+  // TODO: handle app when no connection to network 
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
 
   // animation for bottom tabs
@@ -154,8 +159,11 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
 
   const chordSheetRows = chordSheetCrdString.split('\n'); // TODO: what if there is \n\n
 
-  const chordSheet = chordSheetRows.map((row) => {
+  console.log('chordSheetRows:', chordSheetRows);
+
+  const chordSheet = chordSheetRows.map((row, idx) => {
     let captions = row.match(/{[^{}]+}/g);
+
     if (captions) {
       let captionsParsed = captions.map((caption: string, captionIdx: string) => {
         if (caption.startsWith('{column_break')) {
@@ -197,11 +205,20 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
       return captionsParsed;
     }
 
+    if(!chordsVisible && row.match(/^(?:\[[^\]]*\])+(\\r)?$/gm)){
+      return null;
+    }
+
+    if(row === '\r' && chordSheetRows[idx+2] === '\r' && chordSheetRows[idx-2] === '\r'){
+      return null;
+    }
+
     // TODO: replace \n's in row with empty row
     const rowStart = row.match(/^\[[^\[\]]+\][ ]/g);
     const rowEnd = row.match(/[ ]\[[^\[\]]+\]$/g);
     const rowMiddle = row?.replace(/^\[[^\[\]]+\][ ]/g, '').replace(/[ ]\[[^\[\]]+\]$/g, '')?.match(/(\[[^\[\]]*\])?[^\[]*/g)?.filter(rowPart => rowPart !== '');
 
+    // console.log('rs, re, rm', rowStart, rowEnd, rowMiddle) // TODO: remove
 
 
     const rowStartParsed = rowStart ? (<View style={chordLyricsStyles.chordsLyricsWrapper}>
@@ -272,15 +289,24 @@ return(
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{ paddingTop: 24 + 54, paddingBottom: 216  }} // TODO: adjust padding bottom based on button width and device screen; adjust padding top based on header height
         style={styles.scrollView}
-        onScroll={(event) => {
-          btScrollY.setValue(event.nativeEvent.contentOffset.y * 1.73);
-          headerScrollY.setValue(event.nativeEvent.contentOffset.y);
-        }}>
-        <View style={styles.body}>
-          <View style={chordLyricsStyles.lyricsContainer}>
-           {chordSheet}
-          </View>
-        </View>
+        >
+          <TouchableHighlight onPress={() => {
+            btScrollY.setValue(btScrollY?._value === 100 ? 0 : 100);
+            headerScrollY.setValue(headerScrollY?._value === 107.26 ? 0: 107.26);
+          }}
+          underlayColor="transparent"
+          >
+            <View style={styles.body}>
+              <View >
+                <Text>
+              {`Key: ${metaKey}\nCapo: ${metaCapo}\nTempo: ${metaTempo}\n\nArtist title: ${artistTitle}\nAlbum title: ${albumTitle}\n\nAuthor: ${metaTextAuthor}\nTranslation: ${metaTranslation}\nOriginal: ${metaOriginal}\nBible ref: ${metaBibleRef}\n\nSpotifyUrl: ${metaSpotifyUrl}\nYouTubeUrl:${metaYoutubeUrl}`}
+                </Text>
+              </View>
+              <View style={chordLyricsStyles.lyricsContainer}>
+              {chordSheet}
+              </View>
+            </View>
+          </TouchableHighlight>
       </ScrollView>
       <Animated.View style={{transform:[{translateY: btTranslateY}]}}>
       <View style={styles.bottomTabs}>
@@ -304,6 +330,8 @@ const chordLyricsStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+    // borderColor: 'red', // TODO-REMOVE
+    // borderWidth: 1 // TODO-REMOVE
   },
 
   chordsLyricsWrapper: {
@@ -336,7 +364,7 @@ const chordLyricsStyles = StyleSheet.create({
     textTransform: 'uppercase',
     fontFamily: 'Montserrat',
     fontSize: 14,
-    fontWeight: '100',
+    fontWeight: '400',
   },
   captionItalic: {fontStyle: 'italic'},
   columnBreak: {

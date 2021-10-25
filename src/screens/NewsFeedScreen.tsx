@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
+    // fontFamily: 'Montserrat-SemiBold',
     fontWeight: '400',
     color: 'grey',
   },
