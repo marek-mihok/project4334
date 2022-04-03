@@ -1,9 +1,8 @@
-import React, {useState, FunctionComponent, useEffect} from 'react';
+import React, {useState, FunctionComponent} from 'react';
 import {View, ScrollView, StyleSheet,  Image, Animated, Platform, } from 'react-native';
-import {Text, Title,} from 'react-native-paper';
+import {Text, Title, useTheme, IconButton} from 'react-native-paper';
 import { Theme } from 'react-native-paper/lib/typescript/src/types';
 import Header from '../components/Header';
-import Spacing from '../components/Spacing';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 import InsetShadow from 'react-native-inset-shadow'
@@ -34,6 +33,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const insets = useSafeArea();
   const {songId} = route.params;
   const {state} = useAsyncStorage();
+  const { colors } = useTheme();
   const {songs, albums, artists} = state;
 
   
@@ -55,17 +55,25 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   // console.log('song:', songs[songId].chordpro);
   const songTitle = song?.title;
   const chordpro = song?.chordpro;
-  const metaKey = song?.key;
-  const metaCapo = song?.capo;
-  const metaTempo = song?.tempo;
-  const metaBibleRef = song?.bible_ref;
-  const metaTextAuthor = song?.text;
-  const metaOriginal = song?.original;
-  const metaTranslation = song?.translation;
-  const metaSpotifyUrl = song?.spotify;
-  const metaYoutubeUrl = song?.video;
+  
+  const meta = [
+    {decription: song?.tempo + " BPM", value: song?.tempo},
+    {decription: song?.key, value: song?.key},
+    {decription: "Capo " + song?.capo, value: song?.capo},
+  ];
+
+  const metaExtended = [
+    {decription: "Bible ref", value: song?.bible_ref},
+    {decription: "Text author", value: song?.text},
+    {decription: "Original", value: song?.original},
+    {decription: "Translation", value: song?.translation},
+  ];
+
   const albumTitle = album?.title;
   const artistTitle = artist?.title;
+
+  const metaSpotifyUrl = song?.spotify;
+  const metaYoutubeUrl = song?.video;
   const chordSheetCrdString = chordpro?.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
   console.log('chordSheetCrdString:',chordSheetCrdString);
 
@@ -236,11 +244,11 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
     </View>
   </View> ) : null;
 
-  const rowMiddleParsed = rowMiddle?.map(row => {
+  const rowMiddleParsed = rowMiddle?.map((row, idx) => {
     let chord = row.match(/(\[[^\[\]]*\])/g);
     let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
 return(
-    <View key={`key-${lyrics?.[0]}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
+    <View key={`key-${lyrics?.[0]}-${idx}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
     { chord && <View style={chordLyricsStyles.chordsWrapper}>
       {chordsVisible ? (
         <View style={chordLyricsStyles.chord}>
@@ -280,6 +288,8 @@ return(
     );
   });
 
+  const DotDelimiter = ({horizontalPadding}: {horizontalPadding?: number}) => <View style={{...{ flexDirection: 'row', alignItems: 'center'}, ...{paddingHorizontal: horizontalPadding}}}><Text style={{color: colors.disabled, fontSize: 3}}>●</Text></View>
+
   return (
     <SafeAreaView style={{paddingTop: insets.top, paddingBottom: 0, flex: 1, backgroundColor: '#fff'}}>
     <Animated.View style={{transform:[{translateY: headerTranslateY}, ], elevation: 4, zIndex: 100,}}>
@@ -297,11 +307,41 @@ return(
           underlayColor="transparent"
           >
             <View style={styles.body}>
-              <View >
-                <Text>
-              {`Key: ${metaKey}\nCapo: ${metaCapo}\nTempo: ${metaTempo}\n\nArtist title: ${artistTitle}\nAlbum title: ${albumTitle}\n\nAuthor: ${metaTextAuthor}\nTranslation: ${metaTranslation}\nOriginal: ${metaOriginal}\nBible ref: ${metaBibleRef}\n\nSpotifyUrl: ${metaSpotifyUrl}\nYouTubeUrl:${metaYoutubeUrl}`}
-                </Text>
+              <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 2, paddingBottom: 2}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                  <IconButton icon="microphone" size={18} color={colors.disabled}/>
+                  <Text style={{color: colors.disabled, fontWeight: '400', paddingRight: 12}}>{artistTitle}</Text>
+                </View>
+                <DotDelimiter />
+                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                  <IconButton icon="album" size={18} color={colors.disabled}/>
+                  <Text style={{color: colors.disabled, fontWeight: '400'}}>{albumTitle}</Text>
+                </View>
               </View>
+              <View style={{flexDirection: 'row', justifyContent: 'center', backgroundColor: '#F5F5F5', padding: 12, alignItems: 'center'}}>
+                {meta.map((m, idx) => {return m.value ? <>
+                  {idx !== 0 ? <DotDelimiter horizontalPadding={12} /> : null}
+                  <Text style={{color: colors.primary, fontWeight: '700'}}>{m.decription}</Text>
+                </> : null})}
+              </View>
+              <View style={{padding: 16}}>
+                {metaExtended.map(meta => {
+                  if(!meta.value) return;
+                  return <View style={{flexDirection: 'row', paddingTop: 2, paddingBottom: 2}}>
+                            <Text style={{fontWeight: '400', flex: 1}}>
+                              {`${meta.decription}:`}
+                            </Text>
+                            <Text style={{color: colors.primary, fontWeight: '700', flex: 3}}>
+                              {meta.value}
+                            </Text>
+                          </View>
+                })}
+              </View>
+              {/* <View >
+                <Text>
+              {`SpotifyUrl: ${metaSpotifyUrl}\nYouTubeUrl:${metaYoutubeUrl}`}
+                </Text>
+              </View> */}
               <View style={chordLyricsStyles.lyricsContainer}>
               {chordSheet}
               </View>

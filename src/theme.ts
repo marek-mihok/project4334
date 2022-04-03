@@ -1,5 +1,13 @@
 import {DefaultTheme, Theme} from 'react-native-paper';
 
+// declare global {
+//   namespace ReactNativePaper {
+//     interface ThemeColors {
+//       secondary: string;
+//     }
+//   }
+// }
+
 const theme: Theme = {
   ...DefaultTheme,
   colors: {
