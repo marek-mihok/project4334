@@ -44,6 +44,18 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     isInternetReachableRef.current = isInternetReachable;
   }, [isInternetReachable]);
 
+  const 
+    username = '',
+    password = '',
+    headers = new Headers()
+
+    headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
+
+    const payload = {
+    method: "GET",
+    headers
+  }
+
   const fetchSongData = async () => {
     console.log('Fetching song data from WP REST API from', state.lastFetched);
     let allData: any[] = [];
@@ -58,8 +70,18 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     while (morePagesAvailable) {
       currentPage++;
       const response = await fetch(
-        `https://4334.sk/wp-json/wp/v2/song?per_page=100&order=desc&orderby=date&page=${currentPage}`,
-        );
+        `https://4334.sk/wp-json/wp/v2/song?per_page=100&order=desc&orderby=date&page=${currentPage}`, payload
+        ).then(res => {
+          if (res.ok) {
+            console.log('-----ok-----')
+            return res
+          } else {
+            console.log('-----error-----', res)
+            throw Error(res.statusText);
+          }
+        })
+        .catch(error => console.error(error));
+
         let total_pages = response.headers?.map['x-wp-totalpages']; // TODO: Handle if undefined
         let data = await response.json();
         data.forEach((e: any) => allData.unshift(e));
@@ -70,8 +92,8 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
       const songs: any = {} // TODO: fix type
       allData.forEach((item, idx) => {
         songs[item.id] = {...item, title: item.title.rendered};
-        let sCount = ++ idx;
-        console.log('saved songs count:', sCount, totalCount.current);
+        // let sCount = ++ idx;
+        // console.log('saved songs count:', sCount, totalCount.current);
         // setProgress(((sCount*100)/totalCount.current)/100);
       });
       dispatch({ type: SET_SONGS, payload: songs });
@@ -90,7 +112,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     while (morePagesAvailable) {
       currentPage++;
       const response = await fetch(
-        `https://4334.sk/wp-json/wp/v2/album?per_page=100&page=${currentPage}`,
+        `https://4334.sk/wp-json/wp/v2/album?per_page=100&page=${currentPage}`, payload
         );
         let data = await response.json();
         let total_pages = response.headers?.map['x-wp-totalpages']; // TODO: Handle if undefined
@@ -101,8 +123,8 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
       const albums: any = {}; //TODO: fix type
       allData.forEach((item, idx) => {
         albums[item.id] = {...item, title: item.title.rendered, artistId: item.artist, imageInfoUrl: item?._links["wp:attachment"]?.href || ''};
-        let sCount = ++ idx;
-        console.log('saved albums count:', sCount);
+        // let sCount = ++ idx;
+        // console.log('saved albums count:', sCount);
         // setProgress(((sCount*100)/totalCount.current)/100); // TODO
       });
       console.log('setting albums:', albums)
@@ -121,7 +143,7 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
     while (morePagesAvailable) {
       currentPage++;
       const response = await fetch(
-        `https://4334.sk/wp-json/wp/v2/artist?per_page=100&page=${currentPage}`,
+        `https://4334.sk/wp-json/wp/v2/artist?per_page=100&page=${currentPage}`, payload
         );
         let data = await response.json();
         let total_pages = response.headers?.map['x-wp-totalpages']; // TODO: Handle if undefined
@@ -132,8 +154,8 @@ const RestApiDataProvider: FunctionComponent = ({children}) => {
       const artists: any = {}; //TODO: fix type
       allData.forEach((item, idx) => {
         artists[item.id] = {...item, title: item.title.rendered, imageInfoUrl: item?._links["wp:attachment"]?.href || ''};
-        let sCount = ++ idx;
-        console.log('saved artists count:', sCount);
+        // let sCount = ++ idx;
+        // console.log('saved artists count:', sCount);
         // setProgress(((sCount*100)/totalCount.current)/100); // TODO
       });
       console.log('setting artists:', artists)

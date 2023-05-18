@@ -41,9 +41,9 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const song = songs[songId];
   console.log('song:', song);
   const album = albums[song.album];
-  console.log('album:', album);
+  // console.log('album:', album);
   const artist = artists[album.artist];
-  console.log('artist:', artist);
+  // console.log('artist:', artist);
 
   if(song === undefined){
     navigation.goBack();
@@ -63,10 +63,10 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   ];
 
   const metaExtended = [
-    {decription: "Bible ref", value: song?.bible_ref},
-    {decription: "Text author", value: song?.text},
-    {decription: "Original", value: song?.original},
-    {decription: "Translation", value: song?.translation},
+    {decription: "Referencia", value: song?.bible_ref},
+    {decription: "Text", value: song?.text},
+    {decription: "Orignál", value: song?.original},
+    {decription: "Preklad", value: song?.translation},
   ];
 
   const albumTitle = album?.title;
@@ -75,13 +75,15 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const metaSpotifyUrl = song?.spotify;
   const metaYoutubeUrl = song?.video;
   const chordSheetCrdString = chordpro?.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
-  console.log('chordSheetCrdString:',chordSheetCrdString);
+  // console.log('chordSheetCrdString:',chordSheetCrdString);
 
   const [textSizes, setTextSizes] = useState([16,19,22,25]);
   // TODO: fix iOS vertical align issue
   // TODO: remove empty spaces left when chords and captions are turned off 
+  // TODO: Dno - kurziva!
   // TODO: add metadata
   // TODO: zobrazit prazdne riadky, napriklad pred samostatnymi akordami bez textu
+
   // TODO: spotify support
   // TODO: disable scroll animations when text does not overflow screen
   // TODO: horizontal line under multiple chords
@@ -89,7 +91,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   // TODO: finish transposition: transpo indicator, transpo clear
   // TODO: QR Code playlist share
   // TODO: Double tap for showing chords
-  // TODO: Tap to hide/show header and bottom control panel
   // TODO: Optimize performance by not re-computing the song component when showing/hiding chords/captions, but base it just on child component's visibility
   // TODO: handle app when no connection to network 
   const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
@@ -167,11 +168,14 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
 
   const chordSheetRows = chordSheetCrdString.split('\n'); // TODO: what if there is \n\n
 
-  console.log('chordSheetRows:', chordSheetRows);
+  // console.log('chordSheetRows:', chordSheetRows);
 
   const chordSheet = chordSheetRows.map((row, idx) => {
-    let captions = row.match(/{[^{}]+}/g);
+    let captions = row.match(/{[^{}]+}/g)?.filter(row => !row.includes('{ci:')); // TODO: reimplement just to exclude "ci:" not everything with "i"; solve intalic on level of text view https://regex101.com/r/1RHFPt/1    /\{ci:.*?\}/g
+    if(captions && captions.length === 0) captions = undefined // TODO: handle in previous line
 
+    console.log('row', row)
+    console.log('captions', captions)
     if (captions) {
       let captionsParsed = captions.map((caption: string, captionIdx: string) => {
         if (caption.startsWith('{column_break')) {
@@ -185,10 +189,9 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
         }
         if (
           captionsVisible &&
-          ( caption.startsWith('{c:') ||
-            caption.startsWith('{ci:'))
+          ( caption.startsWith('{c:'))
         ) {
-          const regexCaption = RegExp(/^\{[c|ci]{1,2}\:[ ]?(.*)\}$/, 'g');
+          const regexCaption = RegExp(/^\{[c]{1,2}\:[ ]?(.*)\}$/, 'g');
           const captionMatch = regexCaption.exec(caption);
           let captionFormatted = captionMatch && captionMatch[1] ? captionMatch[1] : '';
           return (
@@ -199,9 +202,9 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
                 key={captionIdx + 'text'}
                 style={[
                   chordLyricsStyles.caption, {fontSize: textSizes[0]},
-                  caption.startsWith('{ci:')
-                    ? chordLyricsStyles.captionItalic
-                    : null,
+                  // caption.startsWith('{ci:')
+                  //   ? chordLyricsStyles.captionItalic
+                  //   : null,
                 ]}>
                 {captionFormatted} 
               </Text>
@@ -213,20 +216,44 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
       return captionsParsed;
     }
 
+    // const isItalic = false;
+    // const isItalic = row.startsWith('{ci:')
+    // if(isItalic){
+    //   let captions = row.match(/{[^{}]+}/g);
+    //   const regexCaption = RegExp(/^\{[ci]{1,2}\:[ ]?(.*)\}$/, 'g');
+    //   const captionMatch = regexCaption.exec(captions[0]);
+    //   row = captionMatch && captionMatch[1] ? captionMatch[1] : '';
+    // }
+
     if(!chordsVisible && row.match(/^(?:\[[^\]]*\])+(\\r)?$/gm)){
       return null;
     }
 
     if(row === '\r' && chordSheetRows[idx+2] === '\r' && chordSheetRows[idx-2] === '\r'){
-      return null;
+      return null; // TODO
     }
+
+    const splitTextBlocks = (text) => {
+      if(!text) return null;
+      const regex = /\{ci:(.*?)\}/g;
+      let result = text.replace(regex, (match, blockContent) => {
+        return `{ci:${blockContent.split('[').join('}[').split(']').join(']{ci:').replace('{ci:}', '')}}`;
+      });
+    
+      return result;
+    };
+
+    const middleRowProcessed = splitTextBlocks(row);
 
     // TODO: replace \n's in row with empty row
     const rowStart = row.match(/^\[[^\[\]]+\][ ]/g);
     const rowEnd = row.match(/[ ]\[[^\[\]]+\]$/g);
-    const rowMiddle = row?.replace(/^\[[^\[\]]+\][ ]/g, '').replace(/[ ]\[[^\[\]]+\]$/g, '')?.match(/(\[[^\[\]]*\])?[^\[]*/g)?.filter(rowPart => rowPart !== '');
+    const rowMiddle = middleRowProcessed?.replace(/^\[[^\[\]]+\][ ]/g, '').replace(/[ ]\[[^\[\]]+\]$/g, '')?.match(/(\[[^\[\]]*\])?[^\[]*/g)?.filter(rowPart => rowPart !== '');
 
-    // console.log('rs, re, rm', rowStart, rowEnd, rowMiddle) // TODO: remove
+
+    console.log('row:', row, '|rs, re, rm:', rowStart, rowEnd, rowMiddle) // TODO: remove
+    // console.log(`trim:|${chordSheetRows?.[idx+1]?.trim()}|`)
+    // if(chordSheetRows?.[idx+1] === '\r'){return} // NOT WORKING: Dno!
 
 
     const rowStartParsed = rowStart ? (<View style={chordLyricsStyles.chordsLyricsWrapper}>
@@ -247,6 +274,8 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const rowMiddleParsed = rowMiddle?.map((row, idx) => {
     let chord = row.match(/(\[[^\[\]]*\])/g);
     let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
+    
+    // TODO: if row starts with ci: -> italic starts; if ends with } -> italic ends
 return(
     <View key={`key-${lyrics?.[0]}-${idx}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
     { chord && <View style={chordLyricsStyles.chordsWrapper}>
@@ -258,7 +287,15 @@ return(
     </View>  }
     <View style={chordLyricsStyles.lyricsWrapper}>
       <View style={[chordLyricsStyles.lyrics, {minHeight: textSizes[0] + 8}]}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0], height: 8 + textSizes[0]}]}>{ lyrics[0] || ''}</Text>
+        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0], height: 8 + textSizes[0]}]}>{ 
+        // TODO: Add Montserrat Italic font into react native paper.
+        lyrics?.[0].split(/(\{ci:.*?\})/g).map(text => {
+          if(text.startsWith('{ci:')) return <Text style={{ fontStyle: 'italic' }}>{text.slice(4,-1)}</Text>
+          else return text || ''
+         })
+       
+      }
+        </Text>
       </View>
     </View>
   </View>)
@@ -277,7 +314,9 @@ return(
         <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}> </Text>
       </View>
     </View>
-  </View> ) : null;;
+  </View> ) : null;
+
+  // if(!rowStart && !rowEnd && rowMiddle?.[0] === '\r'){return}
 
     return (
       <View style={chordLyricsStyles.rowWrapper}>
@@ -308,15 +347,19 @@ return(
           >
             <View style={styles.body}>
               <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 2, paddingBottom: 2}}>
-                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                {artistTitle ? <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                   <IconButton icon="microphone" size={18} color={colors.disabled}/>
                   <Text style={{color: colors.disabled, fontWeight: '400', paddingRight: 12}}>{artistTitle}</Text>
-                </View>
+                </View> : null }
+                {albumTitle ? 
+                <>
                 <DotDelimiter />
                 <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                   <IconButton icon="album" size={18} color={colors.disabled}/>
                   <Text style={{color: colors.disabled, fontWeight: '400'}}>{albumTitle}</Text>
-                </View>
+                </View> 
+                </>
+                : null}
               </View>
               <View style={{flexDirection: 'row', justifyContent: 'center', backgroundColor: '#F5F5F5', padding: 12, alignItems: 'center'}}>
                 {meta.map((m, idx) => {return m.value ? <>
@@ -370,8 +413,8 @@ const chordLyricsStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    // borderColor: 'red', // TODO-REMOVE
-    // borderWidth: 1 // TODO-REMOVE
+    borderColor: 'red', // TODO-REMOVE
+    borderWidth: 1 // TODO-REMOVE
   },
 
   chordsLyricsWrapper: {
