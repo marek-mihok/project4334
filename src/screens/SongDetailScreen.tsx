@@ -1,9 +1,9 @@
 import React, {useState, FunctionComponent} from 'react';
 import {View, ScrollView, StyleSheet,  Image, Animated, Platform, } from 'react-native';
-import {Text, Title, useTheme, IconButton} from 'react-native-paper';
+import {Text, Title, useTheme, IconButton, List} from 'react-native-paper';
 import { Theme } from 'react-native-paper/lib/typescript/src/types';
 import Header from '../components/Header';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 import InsetShadow from 'react-native-inset-shadow'
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -35,6 +35,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const {state} = useAsyncStorage();
   const { colors } = useTheme();
   const {songs, albums, artists} = state;
+  const [isInfoExpanded, setIsInfoExpanded] = useState(false);
 
   
 
@@ -174,8 +175,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
     let captions = row.match(/{[^{}]+}/g)?.filter(row => !row.includes('{ci:')); // TODO: reimplement just to exclude "ci:" not everything with "i"; solve intalic on level of text view https://regex101.com/r/1RHFPt/1    /\{ci:.*?\}/g
     if(captions && captions.length === 0) captions = undefined // TODO: handle in previous line
 
-    console.log('row', row)
-    console.log('captions', captions)
     if (captions) {
       let captionsParsed = captions.map((caption: string, captionIdx: string) => {
         if (caption.startsWith('{column_break')) {
@@ -202,9 +201,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
                 key={captionIdx + 'text'}
                 style={[
                   chordLyricsStyles.caption, {fontSize: textSizes[0]},
-                  // caption.startsWith('{ci:')
-                  //   ? chordLyricsStyles.captionItalic
-                  //   : null,
                 ]}>
                 {captionFormatted} 
               </Text>
@@ -216,21 +212,12 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
       return captionsParsed;
     }
 
-    // const isItalic = false;
-    // const isItalic = row.startsWith('{ci:')
-    // if(isItalic){
-    //   let captions = row.match(/{[^{}]+}/g);
-    //   const regexCaption = RegExp(/^\{[ci]{1,2}\:[ ]?(.*)\}$/, 'g');
-    //   const captionMatch = regexCaption.exec(captions[0]);
-    //   row = captionMatch && captionMatch[1] ? captionMatch[1] : '';
-    // }
-
     if(!chordsVisible && row.match(/^(?:\[[^\]]*\])+(\\r)?$/gm)){
       return null;
     }
 
     if(row === '\r' && chordSheetRows[idx+2] === '\r' && chordSheetRows[idx-2] === '\r'){
-      return null; // TODO
+      return null; // TODO:
     }
 
     const splitTextBlocks = (text) => {
@@ -249,11 +236,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
     const rowStart = row.match(/^\[[^\[\]]+\][ ]/g);
     const rowEnd = row.match(/[ ]\[[^\[\]]+\]$/g);
     const rowMiddle = middleRowProcessed?.replace(/^\[[^\[\]]+\][ ]/g, '').replace(/[ ]\[[^\[\]]+\]$/g, '')?.match(/(\[[^\[\]]*\])?[^\[]*/g)?.filter(rowPart => rowPart !== '');
-
-
-    console.log('row:', row, '|rs, re, rm:', rowStart, rowEnd, rowMiddle) // TODO: remove
-    // console.log(`trim:|${chordSheetRows?.[idx+1]?.trim()}|`)
-    // if(chordSheetRows?.[idx+1] === '\r'){return} // NOT WORKING: Dno!
 
 
     const rowStartParsed = rowStart ? (<View style={chordLyricsStyles.chordsLyricsWrapper}>
@@ -275,7 +257,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
     let chord = row.match(/(\[[^\[\]]*\])/g);
     let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
     
-    // TODO: if row starts with ci: -> italic starts; if ends with } -> italic ends
 return(
     <View key={`key-${lyrics?.[0]}-${idx}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
     { chord && <View style={chordLyricsStyles.chordsWrapper}>
@@ -289,7 +270,7 @@ return(
       <View style={[chordLyricsStyles.lyrics, {minHeight: textSizes[0] + 8}]}>
         <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0], height: 8 + textSizes[0]}]}>{ 
         // TODO: Add Montserrat Italic font into react native paper.
-        lyrics?.[0].split(/(\{ci:.*?\})/g).map(text => {
+        lyrics?.[0]?.split(/(\{ci:.*?\})/g).map(text => {
           if(text.startsWith('{ci:')) return <Text style={{ fontStyle: 'italic' }}>{text.slice(4,-1)}</Text>
           else return text || ''
          })
@@ -316,7 +297,6 @@ return(
     </View>
   </View> ) : null;
 
-  // if(!rowStart && !rowEnd && rowMiddle?.[0] === '\r'){return}
 
     return (
       <View style={chordLyricsStyles.rowWrapper}>
@@ -367,8 +347,11 @@ return(
                   <Text style={{color: colors.primary, fontWeight: '700'}}>{m.decription}</Text>
                 </> : null})}
               </View>
-              <View style={{padding: 16}}>
-                {metaExtended.map(meta => {
+              
+                <TouchableOpacity onPress={() => {setIsInfoExpanded(v => !v)}}>
+                <List.Accordion title="Viac informácií" titleStyle={{fontWeight: '300'}} expanded={isInfoExpanded}>
+                <View style={{padding: 16, paddingTop: 0}}>
+                  {metaExtended.map(meta => {
                   if(!meta.value) return;
                   return <View style={{flexDirection: 'row', paddingTop: 2, paddingBottom: 2}}>
                             <Text style={{fontWeight: '400', flex: 1}}>
@@ -379,7 +362,10 @@ return(
                             </Text>
                           </View>
                 })}
-              </View>
+                </View>
+                </List.Accordion>
+                  </TouchableOpacity>
+              
               {/* <View >
                 <Text>
               {`SpotifyUrl: ${metaSpotifyUrl}\nYouTubeUrl:${metaYoutubeUrl}`}
