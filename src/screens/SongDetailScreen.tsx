@@ -1,6 +1,6 @@
-import React, {useState, FunctionComponent} from 'react';
-import {View, ScrollView, StyleSheet,  Image, Animated, Platform, } from 'react-native';
-import {Text, Title, useTheme, IconButton, List} from 'react-native-paper';
+import React, { useState, FunctionComponent } from 'react';
+import { View, ScrollView, StyleSheet, Image, Animated, Platform, } from 'react-native';
+import { Text, Title, useTheme, IconButton, List } from 'react-native-paper';
 import { Theme } from 'react-native-paper/lib/typescript/src/types';
 import Header from '../components/Header';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
@@ -24,20 +24,20 @@ type Props = {
   theme: Theme;
 }
 
-const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
+const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
 
   console.log('SongDetailScreen re-rendered.');
 
   const [chordsVisible, setChordsVisible] = useState(false);
   const [captionsVisible, setCaptionsVisible] = useState(false);
   const insets = useSafeArea();
-  const {songId} = route.params;
-  const {state} = useAsyncStorage();
+  const { songId } = route.params;
+  const { state } = useAsyncStorage();
   const { colors } = useTheme();
-  const {songs, albums, artists} = state;
+  const { songs, albums, artists } = state;
   const [isInfoExpanded, setIsInfoExpanded] = useState(false);
 
-  
+
 
   const song = songs[songId];
   console.log('song:', song);
@@ -46,7 +46,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const artist = artists[album.artist];
   // console.log('artist:', artist);
 
-  if(song === undefined){
+  if (song === undefined) {
     navigation.goBack();
   }
 
@@ -56,18 +56,18 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   // console.log('song:', songs[songId].chordpro);
   const songTitle = song?.title;
   const chordpro = song?.chordpro;
-  
+
   const meta = [
-    {decription: song?.tempo + " BPM", value: song?.tempo},
-    {decription: song?.key, value: song?.key},
-    {decription: "Capo " + song?.capo, value: song?.capo},
+    { decription: song?.tempo + " BPM", value: song?.tempo },
+    { decription: song?.key, value: song?.key },
+    { decription: "Capo " + song?.capo, value: song?.capo },
   ];
 
   const metaExtended = [
-    {decription: "Referencia", value: song?.bible_ref},
-    {decription: "Text", value: song?.text},
-    {decription: "Orignál", value: song?.original},
-    {decription: "Preklad", value: song?.translation},
+    { decription: "Referencia", value: song?.bible_ref },
+    { decription: "Text", value: song?.text },
+    { decription: "Orignál", value: song?.original },
+    { decription: "Preklad", value: song?.translation },
   ];
 
   const albumTitle = album?.title;
@@ -78,7 +78,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   const chordSheetCrdString = chordpro?.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro; // TODO: check if all cases are handled
   // console.log('chordSheetCrdString:',chordSheetCrdString);
 
-  const [textSizes, setTextSizes] = useState([16,19,22,25]);
+  const [textSizes, setTextSizes] = useState([16, 19, 22, 25]);
   // TODO: fix iOS vertical align issue
   // TODO: remove empty spaces left when chords and captions are turned off 
   // TODO: Dno - kurziva!
@@ -94,50 +94,50 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
   // TODO: Double tap for showing chords
   // TODO: Optimize performance by not re-computing the song component when showing/hiding chords/captions, but base it just on child component's visibility
   // TODO: handle app when no connection to network 
-  const [chordsMajor, setChordsMajor] = useState<string[]>(['C','C#','D','D#','E','F','F#','G','G#','A','A#','H']);
+  const [chordsMajor, setChordsMajor] = useState<string[]>(['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'H']);
 
   // animation for bottom tabs
   const btScrollY = new Animated.Value(0);
   const btDiffClamp = Animated.diffClamp(btScrollY, 0, 100);
-  const btTranslateY = btDiffClamp.interpolate({inputRange:[0,100], outputRange:[0,100]});
+  const btTranslateY = btDiffClamp.interpolate({ inputRange: [0, 100], outputRange: [0, 100] });
 
   // animation for header
   const headerScrollY = new Animated.Value(0);
-  const headerDiffClamp = Animated.diffClamp(headerScrollY, 0, 62 +insets.top);
-  const headerTranslateY = headerDiffClamp.interpolate({inputRange:[0,62 + insets.top], outputRange:[0,-62 - insets.top]});
+  const headerDiffClamp = Animated.diffClamp(headerScrollY, 0, 62 + insets.top);
+  const headerTranslateY = headerDiffClamp.interpolate({ inputRange: [0, 62 + insets.top], outputRange: [0, -62 - insets.top] });
 
 
-  const rotate = ( array: any[], times: number, reverse: boolean = false ) => {
+  const rotate = (array: any[], times: number, reverse: boolean = false) => {
     array = array.slice();
-    while( times-- ){
-      if(reverse){
+    while (times--) {
+      if (reverse) {
         array.unshift(array.pop());
-      }else{
-        array.push( array.shift() )
+      } else {
+        array.push(array.shift())
       }
     }
     return array;
   }
 
   const transpose = (chord: string) => {
-    if(chord.includes('/')){
+    if (chord.includes('/')) {
       const chordSplit = chord.split('/');
       return transpose(chordSplit[0]) + '/' + transpose(chordSplit[1]);
     }
     let toneExtracted = chord.match(/^[a-zA-Z][#]?/g) || chord.charAt(0);
-    let chordTone : string = toneExtracted && toneExtracted[0];
-    let chordIndex : number | null = getChordIndex(chordTone);
+    let chordTone: string = toneExtracted && toneExtracted[0];
+    let chordIndex: number | null = getChordIndex(chordTone);
     let isMajor: boolean = (chordTone.charCodeAt(0) >= 65 && chordTone.charCodeAt(0) <= 90);
-    if(chordIndex !== null){
+    if (chordIndex !== null) {
       let chordToneTransposed = isMajor ? chordsMajor[chordIndex] : chordsMajor[chordIndex].toLowerCase();
       return chordToneTransposed + chord.slice(toneExtracted[0].length || 1);
-    }else{
+    } else {
       return chord;
     }
   }
 
   const getChordIndex = (chordTone: string) => {
-    switch(chordTone.toUpperCase()){
+    switch (chordTone.toUpperCase()) {
       case 'C':
         return 0;
       case 'C#':
@@ -173,7 +173,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
 
   const chordSheet = chordSheetRows.map((row, idx) => {
     let captions = row.match(/{[^{}]+}/g)?.filter(row => !row.includes('{ci:')); // TODO: reimplement just to exclude "ci:" not everything with "i"; solve intalic on level of text view https://regex101.com/r/1RHFPt/1    /\{ci:.*?\}/g
-    if(captions && captions.length === 0) captions = undefined // TODO: handle in previous line
+    if (captions && captions.length === 0) captions = undefined // TODO: handle in previous line
 
     if (captions) {
       let captionsParsed = captions.map((caption: string, captionIdx: string) => {
@@ -188,7 +188,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
         }
         if (
           captionsVisible &&
-          ( caption.startsWith('{c:'))
+          (caption.startsWith('{c:'))
         ) {
           const regexCaption = RegExp(/^\{[c]{1,2}\:[ ]?(.*)\}$/, 'g');
           const captionMatch = regexCaption.exec(caption);
@@ -200,9 +200,9 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
               <Text
                 key={captionIdx + 'text'}
                 style={[
-                  chordLyricsStyles.caption, {fontSize: textSizes[0]},
+                  chordLyricsStyles.caption, { fontSize: textSizes[0] },
                 ]}>
-                {captionFormatted} 
+                {captionFormatted}
               </Text>
             </View>
           );
@@ -212,21 +212,21 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
       return captionsParsed;
     }
 
-    if(!chordsVisible && row.match(/^(?:\[[^\]]*\])+(\\r)?$/gm)){
+    if (!chordsVisible && row.match(/^(?:\[[^\]]*\])+(\\r)?$/gm)) {
       return null;
     }
 
-    if(row === '\r' && chordSheetRows[idx+2] === '\r' && chordSheetRows[idx-2] === '\r'){
+    if (row === '\r' && chordSheetRows[idx + 2] === '\r' && chordSheetRows[idx - 2] === '\r') {
       return null; // TODO:
     }
 
     const splitTextBlocks = (text) => {
-      if(!text) return null;
+      if (!text) return null;
       const regex = /\{ci:(.*?)\}/g;
       let result = text.replace(regex, (match, blockContent) => {
         return `{ci:${blockContent.split('[').join('}[').split(']').join(']{ci:').replace('{ci:}', '')}}`;
       });
-    
+
       return result;
     };
 
@@ -239,153 +239,158 @@ const SongDetailScreen: FunctionComponent<Props> = ({route, navigation}) => {
 
 
     const rowStartParsed = rowStart ? (<View style={chordLyricsStyles.chordsLyricsWrapper}>
-    <View style={chordLyricsStyles.chordsWrapper}>
-      {chordsVisible ? (
-        <View style={chordLyricsStyles.chord}>
-          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{transpose(rowStart[0].slice(1,-2))}</Text>
-        </View>
-      ) : null}
-    </View>
-    <View style={chordLyricsStyles.lyricsWrapper}>
-      <View style={chordLyricsStyles.lyrics}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]} > </Text>
+      <View style={chordLyricsStyles.chordsWrapper}>
+        {chordsVisible ? (
+          <View style={chordLyricsStyles.chord}>
+            <Text style={[chordLyricsStyles.chordsText, { fontSize: textSizes[0] }]}>{transpose(rowStart[0].slice(1, -2))}</Text>
+          </View>
+        ) : null}
       </View>
-    </View>
-  </View> ) : null;
+      <View style={chordLyricsStyles.lyricsWrapper}>
+        <View style={chordLyricsStyles.lyrics}>
+          <Text style={[chordLyricsStyles.lyricsText, { fontSize: textSizes[0] }]} > </Text>
+        </View>
+      </View>
+    </View>) : null;
 
-  const rowMiddleParsed = rowMiddle?.map((row, idx) => {
-    let chord = row.match(/(\[[^\[\]]*\])/g);
-    let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
-    
-return(
-    <View key={`key-${lyrics?.[0]}-${idx}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
-    { chord && <View style={chordLyricsStyles.chordsWrapper}>
-      {chordsVisible ? (
-        <View style={chordLyricsStyles.chord}>
-          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{transpose(chord[0].slice(1,-1))}</Text>
-        </View>
-      ) : null}
-    </View>  }
-    <View style={chordLyricsStyles.lyricsWrapper}>
-      <View style={[chordLyricsStyles.lyrics, {minHeight: textSizes[0] + 8}]}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0], height: 8 + textSizes[0]}]}>{ 
-        // TODO: Add Montserrat Italic font into react native paper.
-        lyrics?.[0]?.split(/(\{ci:.*?\})/g).map(text => {
-          if(text.startsWith('{ci:')) return <Text style={{ fontStyle: 'italic' }}>{text.slice(4,-1)}</Text>
-          else return text || ''
-         })
-       
-      }
-        </Text>
-      </View>
-    </View>
-  </View>)
-  });
+    const rowMiddleParsed = rowMiddle?.map((row, idx) => {
+      let chord = row.match(/(\[[^\[\]]*\])/g);
+      let lyrics = row.match(/[^\[\]]*(?![^\[\]]*\])/g)?.filter(word => word !== "");
 
-  const rowEndParsed = rowEnd ? (<View style={chordLyricsStyles.chordsLyricsWrapper}>
-    <View style={chordLyricsStyles.chordsWrapper}>
-      {chordsVisible ? (
-        <View style={chordLyricsStyles.chord}>
-          <Text style={[chordLyricsStyles.chordsText, {fontSize: textSizes[0]}]}>{transpose(rowEnd[0].slice(2,-1))}</Text>
-        </View>
-      ) : null}
-    </View>
-    <View style={chordLyricsStyles.lyricsWrapper}>
-      <View style={chordLyricsStyles.lyrics}>
-        <Text style={[chordLyricsStyles.lyricsText, {fontSize: textSizes[0]}]}> </Text>
+      return (
+        <View key={`key-${lyrics?.[0]}-${idx}-${chord?.[0]}`} style={chordLyricsStyles.chordsLyricsWrapper}>
+          {chord && <View style={chordLyricsStyles.chordsWrapper}>
+            {chordsVisible ? (
+              <View style={chordLyricsStyles.chord}>
+                <Text style={[chordLyricsStyles.chordsText, { fontSize: textSizes[0] }]}>{transpose(chord[0].slice(1, -1))}</Text>
+              </View>
+            ) : null}
+          </View>}
+          <View style={chordLyricsStyles.lyricsWrapper}>
+            <View style={[chordLyricsStyles.lyrics, { minHeight: textSizes[0] + 8 }]}>
+              <Text style={[chordLyricsStyles.lyricsText, { fontSize: textSizes[0], height: 8 + textSizes[0] }]}>{
+                // TODO: Add Montserrat Italic font into react native paper.
+                lyrics?.[0]?.split(/(\{ci:.*?\})/g).map(text => {
+                  if (text.startsWith('{ci:')) return <Text style={{ fontStyle: 'italic' }}>{text.slice(4, -1)}</Text>
+                  else return text || ''
+                })
+
+              }
+              </Text>
+            </View>
+          </View>
+        </View>)
+    });
+
+    // TODO: Reduce redundant empty rows.
+    // if(!rowStart && !rowEnd && rowMiddle?.[0] === '\r'){return}
+
+    const rowEndParsed = rowEnd ? (<View style={chordLyricsStyles.chordsLyricsWrapper}>
+      <View style={chordLyricsStyles.chordsWrapper}>
+        {chordsVisible ? (
+          <View style={chordLyricsStyles.chord}>
+            <Text style={[chordLyricsStyles.chordsText, { fontSize: textSizes[0] }]}>{transpose(rowEnd[0].slice(2, -1))}</Text>
+          </View>
+        ) : null}
       </View>
-    </View>
-  </View> ) : null;
+      <View style={chordLyricsStyles.lyricsWrapper}>
+        <View style={chordLyricsStyles.lyrics}>
+          <Text style={[chordLyricsStyles.lyricsText, { fontSize: textSizes[0] }]}> </Text>
+        </View>
+      </View>
+    </View>) : null;
 
 
     return (
       <View style={chordLyricsStyles.rowWrapper}>
-        {rowStartParsed} 
-        {rowMiddleParsed} 
+        {rowStartParsed}
+        {rowMiddleParsed}
         {rowEndParsed}
       </View>
     );
   });
 
-  const DotDelimiter = ({horizontalPadding}: {horizontalPadding?: number}) => <View style={{...{ flexDirection: 'row', alignItems: 'center'}, ...{paddingHorizontal: horizontalPadding}}}><Text style={{color: colors.disabled, fontSize: 3}}>●</Text></View>
+  const DotDelimiter = ({ horizontalPadding }: { horizontalPadding?: number }) => <View style={{ ...{ flexDirection: 'row', alignItems: 'center' }, ...{ paddingHorizontal: horizontalPadding } }}><Text style={{ color: colors.disabled, fontSize: 3 }}>●</Text></View>
 
   return (
-    <SafeAreaView style={{paddingTop: insets.top, paddingBottom: 0, flex: 1, backgroundColor: '#fff'}}>
-    <Animated.View style={{transform:[{translateY: headerTranslateY}, ], elevation: 4, zIndex: 100,}}>
-      <Header title={songTitle} dark={true} />
-    </Animated.View>
+    <SafeAreaView style={{ paddingTop: insets.top, paddingBottom: 0, flex: 1, backgroundColor: '#fff' }}>
+      <Animated.View style={{ transform: [{ translateY: headerTranslateY },], elevation: 4, zIndex: 100, }}>
+        <Header title={songTitle} dark={true} />
+      </Animated.View>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ paddingTop: 24 + 54, paddingBottom: 216  }} // TODO: adjust padding bottom based on button width and device screen; adjust padding top based on header height
+        contentContainerStyle={{ paddingTop: 24 + 54, paddingBottom: 216 }} // TODO: adjust padding bottom based on button width and device screen; adjust padding top based on header height
         style={styles.scrollView}
-        >
-          <TouchableHighlight onPress={() => {
-            btScrollY.setValue(btScrollY?._value === 100 ? 0 : 100);
-            headerScrollY.setValue(headerScrollY?._value === 107.26 ? 0: 107.26);
-          }}
+      >
+        <TouchableHighlight onPress={() => {
+          btScrollY.setValue(btScrollY?._value === 100 ? 0 : 100);
+          headerScrollY.setValue(headerScrollY?._value === 107.26 ? 0 : 107.26);
+        }}
           underlayColor="transparent"
-          >
-            <View style={styles.body}>
-              <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 2, paddingBottom: 2}}>
-                {artistTitle ? <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                  <IconButton icon="microphone" size={18} color={colors.disabled}/>
-                  <Text style={{color: colors.disabled, fontWeight: '400', paddingRight: 12}}>{artistTitle}</Text>
-                </View> : null }
-                {albumTitle ? 
+        >
+          <View style={styles.body}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', paddingTop: 2, paddingBottom: 2 }}>
+              {artistTitle ? <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <IconButton icon="microphone" size={18} color={colors.disabled} />
+                <Text style={{ color: colors.disabled, fontWeight: '400', paddingRight: 12 }}>{artistTitle}</Text>
+              </View> : null}
+              {albumTitle ?
                 <>
-                <DotDelimiter />
-                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                  <IconButton icon="album" size={18} color={colors.disabled}/>
-                  <Text style={{color: colors.disabled, fontWeight: '400'}}>{albumTitle}</Text>
-                </View> 
+                  <DotDelimiter />
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <IconButton icon="album" size={18} color={colors.disabled} />
+                    <Text style={{ color: colors.disabled, fontWeight: '400' }}>{albumTitle}</Text>
+                  </View>
                 </>
                 : null}
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'center', backgroundColor: '#F5F5F5', padding: 12, alignItems: 'center'}}>
-                {meta.map((m, idx) => {return m.value ? <>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: '#F5F5F5', padding: 12, alignItems: 'center' }}>
+              {meta.map((m, idx) => {
+                return m.value ? <>
                   {idx !== 0 ? <DotDelimiter horizontalPadding={12} /> : null}
-                  <Text style={{color: colors.primary, fontWeight: '700'}}>{m.decription}</Text>
-                </> : null})}
-              </View>
-              
-                <TouchableOpacity onPress={() => {setIsInfoExpanded(v => !v)}}>
-                <List.Accordion title="Viac informácií" titleStyle={{fontWeight: '300'}} expanded={isInfoExpanded}>
-                <View style={{padding: 16, paddingTop: 0}}>
+                  <Text style={{ color: colors.primary, fontWeight: '700' }}>{m.decription}</Text>
+                </> : null
+              })}
+            </View>
+
+            <TouchableOpacity onPress={() => { setIsInfoExpanded(v => !v) }}>
+              <List.Accordion title="Viac informácií" titleStyle={{ fontWeight: '300' }} expanded={isInfoExpanded}>
+                <View style={{ padding: 16, paddingTop: 0 }}>
                   {metaExtended.map(meta => {
-                  if(!meta.value) return;
-                  return <View style={{flexDirection: 'row', paddingTop: 2, paddingBottom: 2}}>
-                            <Text style={{fontWeight: '400', flex: 1}}>
-                              {`${meta.decription}:`}
-                            </Text>
-                            <Text style={{color: colors.primary, fontWeight: '700', flex: 3}}>
-                              {meta.value}
-                            </Text>
-                          </View>
-                })}
+                    if (!meta.value) return;
+                    return <View style={{ flexDirection: 'row', paddingTop: 2, paddingBottom: 2 }}>
+                      <Text style={{ fontWeight: '400', flex: 1 }}>
+                        {`${meta.decription}:`}
+                      </Text>
+                      <Text style={{ color: colors.primary, fontWeight: '700', flex: 3 }}>
+                        {meta.value}
+                      </Text>
+                    </View>
+                  })}
                 </View>
-                </List.Accordion>
-                  </TouchableOpacity>
-              
-              {/* <View >
+              </List.Accordion>
+            </TouchableOpacity>
+
+            {/* <View >
                 <Text>
               {`SpotifyUrl: ${metaSpotifyUrl}\nYouTubeUrl:${metaYoutubeUrl}`}
                 </Text>
               </View> */}
-              <View style={chordLyricsStyles.lyricsContainer}>
+            <View style={chordLyricsStyles.lyricsContainer}>
               {chordSheet}
-              </View>
             </View>
-          </TouchableHighlight>
+          </View>
+        </TouchableHighlight>
       </ScrollView>
-      <Animated.View style={{transform:[{translateY: btTranslateY}]}}>
-      <View style={styles.bottomTabs}>
-<View style={styles.tab} ><InsetShadow containerStyle={styles.tabTouchable} elevation={chordsVisible ? 4 : 0} shadowOpacity={chordsVisible ? 0.4 : 0} shadowRadius={3} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => {setChordsVisible(!chordsVisible)}}><Image style={{height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')}/></TouchableHighlight></InsetShadow></View>
-{/* <View style={styles.tabDivider}></View> */}
-<View style={styles.tab} ><InsetShadow containerStyle={[styles.tabTouchable, Platform.OS === 'android' && {borderLeftWidth: 1, borderLeftColor: '#44d480', }]} elevation={captionsVisible ? 4 : 0} shadowOpacity={captionsVisible ? 0.4 : 0} shadowRadius={3} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setCaptionsVisible(!captionsVisible)}}><Image style={{height: 16, width: 36}} source={require('../assets/images/icon-captions-white.png')}/></TouchableHighlight></InsetShadow></View>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1, true))} } disabled={!chordsVisible}><Title style={[styles.btText, !chordsVisible && {opacity: 0.5}]}>-1</Title></TouchableHighlight></View>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setChordsMajor(rotate(chordsMajor, 1))} } disabled={!chordsVisible} ><Title style={[styles.btText, !chordsVisible && {opacity: 0.5}]}>+1</Title></TouchableHighlight></View>
-<View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'}  onPress={() => {setTextSizes(rotate(textSizes, 1))}}><Title style={styles.btText}>Aa</Title></TouchableHighlight></View>
-      </View>
+      <Animated.View style={{ transform: [{ translateY: btTranslateY }] }}>
+        <View style={styles.bottomTabs}>
+          <View style={styles.tab} ><InsetShadow containerStyle={styles.tabTouchable} elevation={chordsVisible ? 4 : 0} shadowOpacity={chordsVisible ? 0.4 : 0} shadowRadius={3} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => { setChordsVisible(!chordsVisible) }}><Image style={{ height: 24, width: 24, }} source={require('../assets/images/icon-guitar-white.png')} /></TouchableHighlight></InsetShadow></View>
+          {/* <View style={styles.tabDivider}></View> */}
+          <View style={styles.tab} ><InsetShadow containerStyle={[styles.tabTouchable, Platform.OS === 'android' && { borderLeftWidth: 1, borderLeftColor: '#44d480', }]} elevation={captionsVisible ? 4 : 0} shadowOpacity={captionsVisible ? 0.4 : 0} shadowRadius={3} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => { setCaptionsVisible(!captionsVisible) }}><Image style={{ height: 16, width: 36 }} source={require('../assets/images/icon-captions-white.png')} /></TouchableHighlight></InsetShadow></View>
+          <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => { setChordsMajor(rotate(chordsMajor, 1, true)) }} disabled={!chordsVisible}><Title style={[styles.btText, !chordsVisible && { opacity: 0.5 }]}>-1</Title></TouchableHighlight></View>
+          <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => { setChordsMajor(rotate(chordsMajor, 1)) }} disabled={!chordsVisible} ><Title style={[styles.btText, !chordsVisible && { opacity: 0.5 }]}>+1</Title></TouchableHighlight></View>
+          <View style={styles.tab} ><TouchableHighlight style={styles.tabTouchable} underlayColor={'rgba(255,255,255,0.4)'} onPress={() => { setTextSizes(rotate(textSizes, 1)) }}><Title style={styles.btText}>Aa</Title></TouchableHighlight></View>
+        </View>
       </Animated.View>
     </SafeAreaView>
   );
@@ -399,8 +404,8 @@ const chordLyricsStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    borderColor: 'red', // TODO-REMOVE
-    borderWidth: 1 // TODO-REMOVE
+    // borderColor: 'red', // TODO: REMOVE
+    // borderWidth: 1 // TODO: REMOVE
   },
 
   chordsLyricsWrapper: {
@@ -427,7 +432,7 @@ const chordLyricsStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  captionWrapper: {alignItems: 'center', paddingVertical: 12, },
+  captionWrapper: { alignItems: 'center', paddingVertical: 12, },
   caption: {
     color: '#bbb',
     textTransform: 'uppercase',
@@ -435,7 +440,7 @@ const chordLyricsStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
   },
-  captionItalic: {fontStyle: 'italic'},
+  captionItalic: { fontStyle: 'italic' },
   columnBreak: {
     width: '100%',
     height: 0.75,
@@ -459,8 +464,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   bottomTabs: {
-    position: 'absolute', 
-    bottom: 20, 
+    position: 'absolute',
+    bottom: 20,
     alignSelf: 'center',
     marginHorizontal: 16,
     flexDirection: 'row',
@@ -485,16 +490,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabTouchable: {    alignContent: 'center',
-  alignItems: 'center',
-  justifyContent: 'center', height: 64, width: 64, borderRadius: 14,  },
+  tabTouchable: {
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center', height: 64, width: 64, borderRadius: 14,
+  },
   tabDivider: {
     height: 36,
     width: 0.65,
     backgroundColor: '#fff',
     opacity: 0.6,
   },
-  btText: {fontSize: 18, color: '#fff', fontWeight: 'bold'}
+  btText: { fontSize: 18, color: '#fff', fontWeight: 'bold' }
 });
 
 export default SongDetailScreen;
