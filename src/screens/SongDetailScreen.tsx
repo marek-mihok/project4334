@@ -379,17 +379,45 @@ const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
                   <html>
                     <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
                     <body style="margin: 0;">
-                      <iframe
-                      title="Spotify Web Player"
-                      src="https://open.spotify.com/embed${metaSpotifyUrl.replace('https://open.spotify.com', '')}&utm_source=oembed"
-                      width='100%'
-                      height='80'
-                      frameBorder="0"
-                      allow-fullscreen
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                      loading="lazy"
-                      style="border-radius: 12px;"
-                    />
+                        <iframe
+                        title="Spotify Web Player"
+                        src="https://open.spotify.com/embed${metaSpotifyUrl.replace('https://open.spotify.com', '')}&utm_source=oembed"
+                        width='100%'
+                        height='80'
+                        frameBorder="0"
+                        allow-fullscreen
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                        style="border-radius: 12px;"
+                      />
+                    </body>
+                  </html>
+            `,
+                  }}
+                  automaticallyAdjustContentInsets={false}
+                />
+              }
+              {metaYoutubeUrl &&
+                <WebView
+                  scalesPageToFit={true}
+                  bounces={false}
+                  javaScriptEnabled
+                  style={{ height: 280, width: '100%' }}
+                  source={{
+                    html: `
+                  <!DOCTYPE html>
+                  <html>
+                    <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+                    <body style="margin: 0;">
+                        <iframe 
+                        title="Youtube Web Player" 
+                        width="100%" 
+                        height="281" 
+                        src="https://www.youtube.com/embed/${metaYoutubeUrl.replace('https://www.youtube.com/watch?v=', '')}?feature=oembed" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen=""
+                        />
                     </body>
                   </html>
             `,
