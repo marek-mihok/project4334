@@ -10,6 +10,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { MainParamList } from '../navigators/MainNavigator';
 import { RouteProp } from '@react-navigation/native';
 import { useAsyncStorage } from '../providers/AsyncStorageProvider';
+import WebView from 'react-native-webview';
 
 // TIP: https://medium.com/free-code-camp/a-first-look-at-firstborn-react-natives-new-component-library-51403077a632
 // TIP: https://medium.com/@rossbulat/theming-in-react-native-explained-ac40d0d2e15c
@@ -57,19 +58,19 @@ const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
 
   if (song === undefined) navigation.goBack()
 
-  const 
+  const
     songTitle = song?.title,
     chordpro = song?.chordpro,
     albumTitle = album?.title,
     artistTitle = artist?.title
 
-  
-  const 
+
+  const
     metaSpotifyUrl = song?.spotify,
     metaYoutubeUrl = song?.video,
     chordSheetCrdString = chordpro?.startsWith('[chordwp]') ? chordpro.substring(9, chordpro.length - 10) : chordpro // TODO: check if all cases are handled
 
-    console.log(song)
+  console.log(song)
 
   const meta = [
     { decription: song?.tempo + " BPM", value: song?.tempo },
@@ -99,7 +100,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
     array = array.slice();
     while (times--) {
       if (reverse) array.unshift(array.pop());
-      else array.push(array.shift()) 
+      else array.push(array.shift())
     }
     return array;
   }
@@ -295,7 +296,7 @@ const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
 
   interface SpotifyProps extends HTMLAttributes<HTMLIFrameElement> {
     [key: string]: any
-  
+
     link: string
     wide?: boolean
     width?: number | string
@@ -303,37 +304,6 @@ const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
     frameBorder?: number | string
     allow?: string
   }
-
-  const Spotify = ({
-    link,
-    style = {},
-    wide = false,
-    width = wide ? "100%" : 300,
-    height = wide ? 80 : 380,
-    frameBorder = 0,
-    allow = "encrypted-media",
-    ...props
-  }: SpotifyProps) => {
-    const url = new URL(link);
-    // https://open.spotify.com/track/1KFxcj3MZrpBGiGA8ZWriv?si=f024c3aa52294aa1
-    return (
-      <iframe
-        title="Spotify Web Player"
-        src={`https://open.spotify.com/embed${url.pathname}`}
-        width={width}
-        height={height}
-        frameBorder={frameBorder}
-        allow={allow}
-        style={{
-          borderRadius: 8,
-          ...style
-        }}
-        {...props}
-      />
-    );
-  };
-
-  // <Spotify wide link="https://open.spotify.com/track/0mpTtYiDqkcOjNZqJLmjsO?si=e116707491c24ffc" />
 
   const DotDelimiter = ({ horizontalPadding }: { horizontalPadding?: number }) => <View style={{ ...{ flexDirection: 'row', alignItems: 'center' }, ...{ paddingHorizontal: horizontalPadding } }}><Text style={{ color: colors.disabled, fontSize: 3 }}>●</Text></View>
 
@@ -396,12 +366,38 @@ const SongDetailScreen: FunctionComponent<Props> = ({ route, navigation }) => {
               </List.Accordion>
             </TouchableOpacity>
 
-            {/* <View >
-                <Text>
-              {`SpotifyUrl: ${metaSpotifyUrl}\nYouTubeUrl:${metaYoutubeUrl}`}
-                </Text>
-                <WebView></WebView>
-              </View> */}
+            <View >
+              {metaSpotifyUrl &&
+                <WebView
+                  scalesPageToFit={true}
+                  bounces={false}
+                  javaScriptEnabled
+                  style={{ height: 85, width: '100%' }}
+                  source={{
+                    html: `
+                  <!DOCTYPE html>
+                  <html>
+                    <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+                    <body style="margin: 0;">
+                      <iframe
+                      title="Spotify Web Player"
+                      src="https://open.spotify.com/embed${metaSpotifyUrl.replace('https://open.spotify.com', '')}&utm_source=oembed"
+                      width='100%'
+                      height='80'
+                      frameBorder="0"
+                      allow-fullscreen
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                      style="border-radius: 12px;"
+                    />
+                    </body>
+                  </html>
+            `,
+                  }}
+                  automaticallyAdjustContentInsets={false}
+                />
+              }
+            </View>
             <View style={chordLyricsStyles.lyricsContainer}>
               {chordSheet}
             </View>
